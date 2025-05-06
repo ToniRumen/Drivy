@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "app.toni.drivy"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "app.toni.drivy"

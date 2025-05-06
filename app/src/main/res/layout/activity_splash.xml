@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Fondo como ImageView para respetar proporciones -->
+
+    <!-- Logo encima -->
+
+    <!-- Texto de bienvenida -->
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/fondo_splash" />
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/rounded_background"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/icono_drivy"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="120dp" />
+
+
+    <TextView
+        android:id="@+id/welcomeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Bienvenido a DRIVY!"
+        android:fontFamily="@font/racingsansoneregular"
+        android:textSize="40sp"
+        android:textColor="#101010"
+        android:layout_below="@id/logoImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="40dp"
+        android:visibility="visible"
+        android:shadowColor="#FBC289"
+        android:shadowDx="0"
+        android:shadowDy="0"
+        android:shadowRadius="30" />
+
+
+</RelativeLayout>
