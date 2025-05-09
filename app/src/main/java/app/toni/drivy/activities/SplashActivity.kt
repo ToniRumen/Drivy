@@ -6,7 +6,6 @@ import android.os.Handler
 import android.view.animation.AnimationUtils
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import app.toni.drivy.MainActivity
 import app.toni.drivy.R
 
 class SplashActivity : AppCompatActivity() {
