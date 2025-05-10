@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import app.toni.drivy.R
 import app.toni.drivy.fragments.LoginFragment
+import app.toni.drivy.fragments.WelcomeFragment
 
 class AuthActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,7 +18,7 @@ class AuthActivity : AppCompatActivity() {
         // Cargar el fragmento de login por defecto
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.auth_fragment_container, LoginFragment())
+                .replace(R.id.auth_fragment_container, WelcomeFragment())
                 .commit()
         }
     }
