@@ -33,10 +33,16 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    viewBinding {
+        enable = true
+    }
 }
 
 dependencies {
 
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+    implementation ("com.airbnb.android:lottie:6.0.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
