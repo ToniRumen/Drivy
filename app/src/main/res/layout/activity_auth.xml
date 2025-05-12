@@ -1,11 +1,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/black">
 
-    <!-- 🎥 TextureView como fondo de video -->
+    <!-- 🎥 Fondo de video -->
     <TextureView
         android:id="@+id/videoBackground"
         android:layout_width="0dp"
@@ -15,7 +15,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- 🔳 Overlay oscuro opcional -->
+    <!-- 🔳 Capa oscura -->
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -25,7 +25,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Contenedor de fragmentos -->
+    <!-- 🔺 Título con Shimmer -->
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="2000"
+        app:shimmer_base_alpha="0.6"
+        app:shimmer_highlight_alpha="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_margin="32dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tituloWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DRIVY"
+            android:textSize="75sp"
+            android:textColor="#F82A0E"
+            android:fontFamily="@font/racesport"
+            android:textStyle="bold"
+            android:shadowColor="#80000000"
+            android:shadowDx="20"
+            android:shadowDy="20"
+            android:shadowRadius="4" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <!-- 🟠 Subtítulo -->
+    <TextView
+        android:id="@+id/subtituloWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cada viaje puede ser una aventura."
+        android:textColor="#EAEAEA"
+        android:textSize="20sp"
+        android:fontFamily="@font/racingsansoneregular"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/shimmerLogo"
+        app:layout_constraintTop_margin="12dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 💬 Frases cambiantes -->
+    <TextSwitcher
+        android:id="@+id/textSwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#E70B0B"
+        android:textSize="20sp"
+        android:fontFamily="@font/racingsansoneregular"
+        android:textAlignment="center"
+        app:layout_constraintTop_toBottomOf="@id/subtituloWelcome"
+        app:layout_constraintTop_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 📦 Contenedor de fragmentos -->
     <FrameLayout
         android:id="@+id/auth_fragment_container"
         android:layout_width="0dp"
@@ -36,7 +94,7 @@
         android:clipToPadding="false"
         android:padding="24dp"
         tools:layout="@layout/fragment_welcome"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textSwitcher"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

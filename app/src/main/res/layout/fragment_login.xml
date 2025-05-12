@@ -1,77 +1,134 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="24dp"
     android:background="@android:color/transparent">
 
+    <!-- TÍTULO -->
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmerLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        app:shimmer_auto_start="true"
+        app:shimmer_duration="2000"
+        app:shimmer_base_alpha="0.6"
+        app:shimmer_highlight_alpha="0.3"
+        tools:ignore="MissingClass">
+
+
+
+        <TextView
+            android:id="@+id/tituloWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DRIVY"
+            android:textSize="75sp"
+            android:textColor="#F82A0E"
+            android:fontFamily="@font/racesport"
+            android:textStyle="bold"
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:shadowColor="#80000000"
+            android:shadowDx="20"
+            android:shadowDy="20"
+            android:shadowRadius="4" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <!-- SUBTÍTULO -->
+    <TextView
+        android:id="@+id/subtituloWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cada viaje puede ser una aventura."
+        android:textColor="#EAEAEA"
+        android:textSize="25sp"
+        android:fontFamily="@font/racingsansoneregular"
+        android:textAlignment="center"
+        android:layout_below="@id/shimmerLogo"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true" />
+
+    <!-- Cambiador de texto -->
+    <TextSwitcher
+        android:id="@+id/textSwitcher"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/subtituloWelcome"
+        android:textColor="#E70B0B"
+        android:textSize="25sp"
+        android:fontFamily="@font/racingsansoneregular"
+        android:textAlignment="center"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true" />
+
+    <!-- FORMULARIO DE LOGIN -->
     <LinearLayout
+        android:id="@+id/formularioLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textSwitcher"
+        android:layout_marginTop="36dp"
         android:orientation="vertical">
 
-        <!-- Título -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Inicia sesión"
-            android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Email -->
+        <!-- EMAIL -->
         <EditText
             android:id="@+id/emailLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Correo electrónico"
             android:inputType="textEmailAddress"
-            android:textColorHint="#CCCCCC"
+            android:textColorHint="#BBBBBB"
             android:textColor="#FFFFFF"
             android:backgroundTint="#FFFFFF"
-            android:drawableStart="@mipmap/ic_launcher_round"
+            android:drawableStart="@drawable/ic_email"
             android:drawablePadding="10dp"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp"/>
+            android:padding="14dp"
+            android:layout_marginBottom="16dp" />
 
-        <!-- Contraseña -->
+        <!-- CONTRASEÑA -->
         <EditText
             android:id="@+id/passwordLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Contraseña"
             android:inputType="textPassword"
-            android:textColorHint="#CCCCCC"
+            android:textColorHint="#BBBBBB"
             android:textColor="#FFFFFF"
             android:backgroundTint="#FFFFFF"
-            android:drawableStart="@mipmap/ic_launcher_round"
+            android:drawableStart="@drawable/ic_lock"
             android:drawablePadding="10dp"
-            android:padding="12dp"
-            android:layout_marginBottom="24dp"/>
+            android:padding="14dp"
+            android:layout_marginBottom="24dp" />
 
-        <!-- Botón Login -->
+        <!-- BOTÓN LOGIN -->
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="52dp"
             android:text="Entrar"
             android:textStyle="bold"
-            android:textAllCaps="false"
-            android:textColor="#000000"
-            android:backgroundTint="#FFFFFF"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/btn_login"
             android:elevation="6dp"
-            android:padding="12dp"/>
+            android:layout_marginBottom="12dp" />
 
-        <!-- Ir a Registro -->
+        <!-- IR A REGISTRO -->
         <TextView
             android:id="@+id/textIrARegistro"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="¿No tienes cuenta? Regístrate"
-            android:textColor="#CCCCCC"
+            android:textColor="#FFD700"
+            android:textStyle="bold"
+            android:textSize="14sp"
             android:layout_gravity="center"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"/>
     </LinearLayout>
-</ScrollView>
+
+</RelativeLayout>

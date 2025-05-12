@@ -1,109 +1,112 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-
-    android:background="@android:color/transparent">
-
-
-    <!-- TÍTULO -->
-
-    <com.facebook.shimmer.ShimmerFrameLayout
-        android:id="@+id/shimmerLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        app:shimmer_auto_start="true"
-        app:shimmer_duration="1500">
-
-
-
-    <TextView
-        android:id="@+id/tituloWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DRIVY"
-        android:textSize="75sp"
-        android:textColor="#F82A0E"
-        android:fontFamily="@font/racesport"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp"
-        android:layout_centerHorizontal="true"
-        android:shadowColor="#80000000"
-        android:shadowDx="20"
-        android:shadowDy="20"
-        android:shadowRadius="4" />
-
-</com.facebook.shimmer.ShimmerFrameLayout>
-
-    <!-- SUBTÍTULO -->
-    <TextView
-        android:id="@+id/subtituloWelcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cada viaje puede ser una aventura."
-        android:textColor="#EAEAEA"
-        android:textSize="25sp"
-        android:fontFamily="@font/racingsansoneregular"
-        android:textAlignment="center"
-        android:layout_below="@id/tituloWelcome"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
-
-
-    <!-- Cambiador de texto -->
-    <TextSwitcher
-        android:id="@+id/textSwitcher"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/subtituloWelcome"
-        android:textColor="#E70B0B"
-        android:textSize="25sp"
-        android:fontFamily="@font/racingsansoneregular"
-        android:textAlignment="center"
-        android:layout_marginTop="16dp"
-        android:layout_centerHorizontal="true" />
-
-
-
-    <!-- CONTENEDOR DE BOTONES (anclado al fondo) -->
-    <LinearLayout
-        android:id="@+id/contenedorBotones"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
 
-        <!-- BOTÓN LOGIN -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnIrLogin"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Iniciar sesión"
-            android:textSize="16sp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:background="@drawable/btn_login"
-            android:elevation="6dp"
-            android:layout_marginBottom="12dp" />
+        android:background="@android:color/transparent">
 
-        <!-- BOTÓN REGISTRO -->
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btnIrRegistro"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+
+        <!-- TÍTULO -->
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:text="Registrarse"
-            android:textSize="16sp"
-            android:textColor="#FFD700"
+            app:shimmer_auto_start="true"
+            app:shimmer_duration="2000"
+            app:shimmer_base_alpha="0.6"
+            app:shimmer_highlight_alpha="0.3"
+            tools:ignore="MissingClass">
+
+
+
+        <TextView
+            android:id="@+id/tituloWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DRIVY"
+            android:textSize="75sp"
+            android:textColor="#F82A0E"
+            android:fontFamily="@font/racesport"
             android:textStyle="bold"
-            android:background="@drawable/btn_register"
-            android:elevation="4dp"/>
-    </LinearLayout>
+            android:layout_marginTop="20dp"
+            android:layout_centerHorizontal="true"
+            android:shadowColor="#80000000"
+            android:shadowDx="20"
+            android:shadowDy="20"
+            android:shadowRadius="4" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <!-- SUBTÍTULO -->
+        <TextView
+            android:id="@+id/subtituloWelcome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cada viaje puede ser una aventura."
+            android:textColor="#EAEAEA"
+            android:textSize="25sp"
+            android:fontFamily="@font/racingsansoneregular"
+            android:textAlignment="center"
+            android:layout_below="@id/shimmerLogo"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true" />
 
 
-</RelativeLayout>
+        <!-- Cambiador de texto -->
+        <TextSwitcher
+            android:id="@+id/textSwitcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/subtituloWelcome"
+            android:textColor="#E70B0B"
+            android:textSize="25sp"
+            android:fontFamily="@font/racingsansoneregular"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"
+            android:layout_centerHorizontal="true" />
+
+
+
+        <!-- CONTENEDOR DE BOTONES (anclado al fondo) -->
+        <LinearLayout
+            android:id="@+id/contenedorBotones"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:orientation="vertical">
+
+            <!-- BOTÓN LOGIN -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnIrLogin"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:text="Iniciar sesión"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:background="@drawable/btn_login"
+                android:elevation="6dp"
+                android:layout_marginBottom="12dp" />
+
+            <!-- BOTÓN REGISTRO -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnIrRegistro"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="10dp"
+                android:text="Registrarse"
+                android:textSize="16sp"
+                android:textColor="#FFD700"
+                android:textStyle="bold"
+                android:background="@drawable/btn_register"
+                android:elevation="4dp"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
