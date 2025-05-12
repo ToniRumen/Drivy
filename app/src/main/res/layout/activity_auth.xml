@@ -28,6 +28,7 @@
     <!-- 🔺 Título con Shimmer -->
     <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/shimmerLogo"
+        android:layout_margin="50dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:shimmer_auto_start="true"
@@ -35,7 +36,6 @@
         app:shimmer_base_alpha="0.6"
         app:shimmer_highlight_alpha="0.3"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintTop_margin="32dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -59,13 +59,14 @@
         android:id="@+id/subtituloWelcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="30dp"
         android:text="Cada viaje puede ser una aventura."
         android:textColor="#EAEAEA"
-        android:textSize="20sp"
+        android:textSize="40sp"
         android:fontFamily="@font/racingsansoneregular"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/shimmerLogo"
-        app:layout_constraintTop_margin="12dp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -75,11 +76,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#E70B0B"
-        android:textSize="20sp"
+        android:layout_margin="30dp"
+        android:textSize="35sp"
         android:fontFamily="@font/racingsansoneregular"
         android:textAlignment="center"
         app:layout_constraintTop_toBottomOf="@id/subtituloWelcome"
-        app:layout_constraintTop_margin="8dp"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
