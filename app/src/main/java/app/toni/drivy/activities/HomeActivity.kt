@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import android.view.animation.AnimationUtils
 import app.toni.drivy.R
+import app.toni.drivy.fragments.menu.CochesFragment
 import app.toni.drivy.fragments.menu.InicioFragment
 import app.toni.drivy.fragments.menu.RutasFragment
 import app.toni.drivy.network.RetrofitClient
@@ -35,8 +36,16 @@ class HomeActivity : AppCompatActivity() {
             .replace(R.id.home_fragment_container, InicioFragment())
             .commit()
 
+        findViewById<FloatingActionButton>(R.id.fabCoches).setOnClickListener {
+            cambiarFragment(CochesFragment()) // O muestra una pantalla para añadir un coche nuevo
+        }
+
         findViewById<FloatingActionButton>(R.id.fabNuevaRuta).setOnClickListener {
-            cambiarFragment(RutasFragment()) // O muestra una pantalla para añadir nueva ruta
+            cambiarFragment(RutasFragment()) // O muestra una pantalla para añadir una ruta nueva
+        }
+
+        findViewById<FloatingActionButton>(R.id.fabReciente).setOnClickListener {
+            cambiarFragment(InicioFragment()) // O muestra una pantalla para añadir una ruta nueva
         }
 
 

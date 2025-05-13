@@ -25,7 +25,32 @@
         android:id="@+id/home_fragment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="120dp" />
+        android:layout_marginTop="90dp" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabCoches"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Añadir coche"
+        android:src="@drawable/ico_car"
+        android:tint="@android:color/white"
+        app:backgroundTint="#E7E235"
+        app:layout_anchor="@id/home_fragment_container"
+        app:layout_anchorGravity="bottom|end" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabReciente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:contentDescription="Mas reciente"
+        android:src="@drawable/ic_map"
+        android:tint="@android:color/white"
+        app:backgroundTint="#F02020"
+        app:layout_anchor="@id/home_fragment_container"
+        app:layout_anchorGravity="bottom|center" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabNuevaRuta"
@@ -33,9 +58,9 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:contentDescription="Añadir ruta"
-        android:src="@drawable/ico_car"
+        android:src="@drawable/ic_street"
         android:tint="@android:color/white"
-        app:backgroundTint="#FF3C3C"
+        app:backgroundTint="#526AD3"
         app:layout_anchor="@id/home_fragment_container"
-        app:layout_anchorGravity="bottom|end" />
+        app:layout_anchorGravity="bottom|left" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="#CC000000">
+
+    <!-- OPCIONES -->
+    <LinearLayout
+        android:id="@+id/contenedorOpciones"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:weightSum="3"
+        android:orientation="horizontal"
+        android:layout_marginBottom="24dp">
+
+        <!-- ECO -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:id="@+id/opcionEco"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="@drawable/bg_eco_selector">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/modo_eco" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Eco"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:paddingTop="8dp"/>
+            </LinearLayout>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/ecoParticles"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:alpha="0.6"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_fileName="eco_particles.json" />
+        </FrameLayout>
+
+        <!-- NORMAL -->
+        <LinearLayout
+            android:id="@+id/opcionNormal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:padding="12dp"
+            android:background="@drawable/bg_normal_selector">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/modo_normal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Normal"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:paddingTop="8dp"/>
+        </LinearLayout>
+
+        <!-- SPORT -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_gravity="center">
+
+            <LinearLayout
+                android:id="@+id/opcionSport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="12dp"
+                android:background="@drawable/bg_sport_selector">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/modo_race" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sport"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:paddingTop="8dp"/>
+            </LinearLayout>
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/sportParticles"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:alpha="0.6"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_fileName="flames_or_flags.json" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- DESCRIPCIÓN -->
+    <TextView
+        android:id="@+id/textoDescripcion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Selecciona un modo de conducción"
+        android:textColor="#FFFFFF"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:padding="12dp" />
+
+    <!-- BOTÓN ELEGIR -->
+    <Button
+        android:id="@+id/btnElegir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Elegir"
+        android:padding="12dp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:backgroundTint="#FFD700"/>
+</LinearLayout>
