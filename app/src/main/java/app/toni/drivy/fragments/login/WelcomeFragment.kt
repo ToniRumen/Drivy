@@ -1,4 +1,4 @@
-package app.toni.drivy.fragments
+package app.toni.drivy.fragments.login
 
 import android.os.Bundle
 import android.view.LayoutInflater

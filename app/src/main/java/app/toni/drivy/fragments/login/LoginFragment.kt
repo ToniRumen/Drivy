@@ -1,4 +1,4 @@
-package app.toni.drivy.fragments
+package app.toni.drivy.fragments.login
 
 import android.util.Log
 import android.content.Intent
@@ -27,6 +27,7 @@ class LoginFragment : Fragment() {
         val passwordInput = view.findViewById<EditText>(R.id.passwordLogin)
         val loginButton = view.findViewById<Button>(R.id.btnLogin)
         val botonIrARegistro = view.findViewById<TextView>(R.id.textIrARegistro)
+        val progressBar = view.findViewById<ProgressBar>(R.id.loginProgressBar)
 
         // Navegación a registro
         botonIrARegistro.setOnClickListener {
@@ -43,10 +44,20 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            // Mostrar animación de carga
+            progressBar.visibility = View.VISIBLE
+            loginButton.isEnabled = false
+            loginButton.text = "Cargando..."
+
             val request = LoginRequest(email, password)
 
             RetrofitClient.instance.login(request).enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    // Ocultar animación
+                    progressBar.visibility = View.GONE
+                    loginButton.isEnabled = true
+                    loginButton.text = "Entrar"
+
                     if (response.isSuccessful && response.body() != null) {
                         val token = response.body()!!.string()
 
@@ -56,10 +67,13 @@ class LoginFragment : Fragment() {
 
                         Toast.makeText(requireContext(), "Login correcto", Toast.LENGTH_SHORT).show()
 
-                        // Ir a MainActivity
+                        // Ir a MainActivity y limpiar el back stack
                         val intent = Intent(requireContext(), MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
-                        requireActivity().finish()
+
+
+
 
                     } else {
                         Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
@@ -67,6 +81,11 @@ class LoginFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // Ocultar animación
+                    progressBar.visibility = View.GONE
+                    loginButton.isEnabled = true
+                    loginButton.text = "Entrar"
+
                     Toast.makeText(requireContext(), "Error de conexión: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                     Log.e("LoginError", "Fallo de red", t)
                 }

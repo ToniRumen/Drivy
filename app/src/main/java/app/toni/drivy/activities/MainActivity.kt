@@ -10,13 +10,18 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Accede al archivo de preferencias llamado "drivy_prefs"
+        // Accede al archivo de preferencias llamado "app"
         // Aquí guardamos cosas como el token del usuario
-        val sharedPref = getSharedPreferences("drivy_prefs", Context.MODE_PRIVATE)
+
+
+        val sharedPref = getSharedPreferences("app", Context.MODE_PRIVATE)
+
+
+
 
         // Intenta obtener el token que se guardó al hacer login
         // Si no hay token guardado, devuelve null
-        val token = sharedPref.getString("token", null)
+        val token = sharedPref.getString("jwt", null)
 
         // Si ya existe un token, significa que el usuario ya inició sesión anteriormente
         // Por tanto, lo enviamos directamente a la pantalla principal

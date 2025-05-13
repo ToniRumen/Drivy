@@ -16,16 +16,23 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         val welcomeText = findViewById<TextView>(R.id.welcomeText)
-
-        // Cargar animación
         val fadeIn = AnimationUtils.loadAnimation(this, R.anim.fade_in)
         welcomeText.startAnimation(fadeIn)
         welcomeText.visibility = TextView.VISIBLE
 
-        // Después de unos segundos, ir a MainActivity
+        // Verificar si el usuario ya tiene sesión guardada (token)
+        val prefs = getSharedPreferences("app", MODE_PRIVATE)
+        val token = prefs.getString("jwt", null)
+
         Handler().postDelayed({
-            startActivity(Intent(this, MainActivity::class.java))
+            if (token != null) {
+                // Ya tiene token → va directo al menú principal
+                startActivity(Intent(this, MainActivity::class.java))
+            } else {
+                // No tiene token → va a login/registro
+                startActivity(Intent(this, AuthActivity::class.java))
+            }
             finish()
-        }, 3000) // 3 segundos
+        }, 3000)
     }
 }

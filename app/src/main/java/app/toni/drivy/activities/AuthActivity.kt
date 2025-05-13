@@ -13,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import app.toni.drivy.R
 import app.toni.drivy.databinding.ActivityAuthBinding
-import app.toni.drivy.fragments.WelcomeFragment
+import app.toni.drivy.fragments.login.WelcomeFragment
 import com.facebook.shimmer.ShimmerFrameLayout
 import java.util.*
 

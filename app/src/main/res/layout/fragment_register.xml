@@ -153,6 +153,18 @@
                 android:elevation="6dp"
                 android:layout_marginBottom="12dp" />
 
+            <ProgressBar
+                android:id="@+id/registerProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:indeterminateTint="@android:color/white"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_marginBottom="16dp" />
+
+
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

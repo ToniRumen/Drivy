@@ -1,0 +1,5 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/nav_inicio" android:icon="@drawable/ic_launcher_foreground" android:title="Inicio"/>
+    <item android:id="@+id/nav_coches" android:icon="@drawable/ic_launcher_foreground" android:title="Coches"/>
+    <item android:id="@+id/nav_rutas" android:icon="@drawable/ic_launcher_foreground" android:title="Rutas"/>
+</menu>

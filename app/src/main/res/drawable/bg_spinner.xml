@@ -1,0 +1,11 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <solid android:color="#1E1E1E" /> <!-- Fondo oscuro del spinner -->
+
+    <stroke
+        android:width="2dp"
+        android:color="#FF3C3C" /> <!-- Borde rojo estilo deportivo -->
+
+    <corners android:radius="12dp" />
+</shape>
