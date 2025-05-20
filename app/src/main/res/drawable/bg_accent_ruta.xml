@@ -1,0 +1,8 @@
+<!-- res/drawable/bg_accent_ruta.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:startColor="#FF1B1B"
+        android:endColor="#FF6347"
+        android:angle="90"/>
+    <corners android:radius="8dp"/>
+</shape>

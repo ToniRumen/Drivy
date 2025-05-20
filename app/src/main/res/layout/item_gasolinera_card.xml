@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card_racing"
+    android:padding="16dp"
+    android:layout_marginBottom="12dp"
+    android:elevation="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/textNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nombre"
+        android:textColor="#FFD700"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/racingsansoneregular" />
+
+    <TextView
+        android:id="@+id/textDireccion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Dirección"
+        android:textColor="#CCCCCC"
+        android:textSize="14sp"
+        android:fontFamily="@font/racingsansoneregular" />
+
+    <TextView
+        android:id="@+id/textPrecio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="1.59 €/L"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        android:fontFamily="@font/racingsansoneregular"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btnVisitar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Visitar"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#D32F2F"
+        android:fontFamily="@font/racingsansoneregular"
+        android:elevation="3dp"/>
+</LinearLayout>

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.libraries.places.api.Places
 
 
 class MainActivity : AppCompatActivity() {
@@ -13,6 +14,9 @@ class MainActivity : AppCompatActivity() {
         // Accede al archivo de preferencias llamado "app"
         // Aquí guardamos cosas como el token del usuario
 
+        if (!Places.isInitialized()) {
+            Places.initialize(applicationContext, "AIzaSyDEyTgGFym-4Nci_cDiWOy-wzRPB2jJBU0")
+        }
 
         val sharedPref = getSharedPreferences("app", Context.MODE_PRIVATE)
 

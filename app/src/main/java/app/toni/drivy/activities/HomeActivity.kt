@@ -2,70 +2,101 @@ package app.toni.drivy.activities
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.TextSwitcher
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.viewpager2.widget.ViewPager2
 import android.view.animation.AnimationUtils
 import app.toni.drivy.R
-import app.toni.drivy.fragments.menu.CochesFragment
+import app.toni.drivy.fragments.coches.CochesTabFragment
 import app.toni.drivy.fragments.menu.InicioFragment
 import app.toni.drivy.fragments.menu.RutasFragment
 import app.toni.drivy.network.RetrofitClient
-import app.toni.drivy.network.UserResponse
+import app.toni.drivy.network.models.user.UserResponse
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var switcher: TextSwitcher
+    private lateinit var fabInicio: FloatingActionButton
+    private lateinit var fabRutas: FloatingActionButton
+    private lateinit var fabCoches: FloatingActionButton
+    private lateinit var viewPager: ViewPager2
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         switcher = findViewById(R.id.textSwitcherBienvenida)
-        configurarTextSwitcher()
+        fabInicio = findViewById(R.id.fabInicio)
+        fabRutas = findViewById(R.id.fabRutas)
+        fabCoches = findViewById(R.id.fabCoches)
+        viewPager = findViewById(R.id.viewPager)
 
+        configurarTextSwitcher()
         cargarPerfilUsuario()
 
-        // Fragmento inicial
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.home_fragment_container, InicioFragment())
-            .commit()
+        viewPager.adapter = ScreenSlidePagerAdapter(this)
+        viewPager.currentItem = 1 // ⬅️ Inicio como página central
+        actualizarFABs(1)
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                actualizarFABs(position)
+            }
+        })
 
-        findViewById<FloatingActionButton>(R.id.fabCoches).setOnClickListener {
-            cambiarFragment(CochesFragment()) // O muestra una pantalla para añadir un coche nuevo
+        fabInicio.setOnClickListener {
+            viewPager.currentItem = 1
         }
 
-        findViewById<FloatingActionButton>(R.id.fabNuevaRuta).setOnClickListener {
-            cambiarFragment(RutasFragment()) // O muestra una pantalla para añadir una ruta nueva
+        fabRutas.setOnClickListener {
+            viewPager.currentItem = 0
         }
 
-        findViewById<FloatingActionButton>(R.id.fabReciente).setOnClickListener {
-            cambiarFragment(InicioFragment()) // O muestra una pantalla para añadir una ruta nueva
+        fabCoches.setOnClickListener {
+            viewPager.currentItem = 2
         }
-
-
     }
 
-    private fun cambiarFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .setCustomAnimations(
-                R.anim.slide_drift_in,        // Entrada del nuevo fragment
-                R.anim.slide_drift_out,       // Salida del fragment actual
-                R.anim.slide_drift_pop_in,    // Al volver atrás
-                R.anim.slide_drift_pop_out    // Al salir hacia atrás
-            )
-            .replace(R.id.home_fragment_container, fragment)
-            .addToBackStack(null)
-            .commit()
+    private fun actualizarFABs(position: Int) {
+        fabInicio.visibility = if (position == 1) View.GONE else View.VISIBLE
+        fabRutas.visibility = if (position == 0) View.GONE else View.VISIBLE
+        fabCoches.visibility = if (position == 2) View.GONE else View.VISIBLE
     }
 
+    private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
+        override fun getItemCount(): Int = 3
+        override fun createFragment(position: Int): Fragment {
+            return when (position) {
+                0 -> RutasFragment()
+                1 -> InicioFragment()
+                2 -> CochesTabFragment()
+                else -> InicioFragment()
+            }
+        }
+    }
 
-
+    private fun configurarTextSwitcher() {
+        switcher.setFactory {
+            TextView(this).apply {
+                textSize = 25f
+                typeface = resources.getFont(R.font.racingsansoneregular)
+                setTextColor(resources.getColor(android.R.color.holo_red_light, theme))
+                textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+                setPadding(15, 20, 15, 15)
+            }
+        }
+        switcher.inAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
+        switcher.outAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
+    }
 
     private fun cargarPerfilUsuario() {
         val prefs = getSharedPreferences("app", MODE_PRIVATE)
@@ -77,10 +108,6 @@ class HomeActivity : AppCompatActivity() {
                     val nombre = response.body()?.nombre ?: "Nombre conductor"
                     mostrarFraseUnica(nombre)
                     Log.d("Perfil", "Código: ${response.code()}, cuerpo: ${response.body()?.toString()}")
-                    Log.d("Perfil", "RAW JSON: ${response.raw()}")
-                    Log.d("Perfil", "JSON body: ${response.body()}")
-                    Log.d("Perfil", "Error body: ${response.errorBody()?.string()}")
-
                 }
 
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {
@@ -90,20 +117,6 @@ class HomeActivity : AppCompatActivity() {
         } else {
             mostrarFraseUnica("Token nulo")
         }
-    }
-
-    private fun configurarTextSwitcher() {
-        switcher.setFactory {
-            TextView(this).apply {
-                textSize = 30f
-                typeface = resources.getFont(R.font.racingsansoneregular)
-                setTextColor(resources.getColor(android.R.color.holo_red_light, theme))
-                textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-                setPadding(24, 24, 24, 24)
-            }
-        }
-        switcher.inAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
-        switcher.outAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
     }
 
     private fun mostrarFraseUnica(nombre: String) {
@@ -119,6 +132,5 @@ class HomeActivity : AppCompatActivity() {
         switcher.post {
             switcher.setText(saludo)
         }
-
     }
 }

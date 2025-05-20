@@ -32,7 +32,6 @@ class ModoConduccionDialogFragment : DialogFragment() {
         val botonElegir = view.findViewById<Button>(R.id.btnElegir)
         textoDescripcion = view.findViewById(R.id.textoDescripcion)
 
-        // Animaciones individuales
         ecoAnim = view.findViewById(R.id.ecoParticles)
         sportAnim = view.findViewById(R.id.sportParticles)
         fondoDialogo = view
@@ -55,20 +54,44 @@ class ModoConduccionDialogFragment : DialogFragment() {
 
         // SPORT
         sport.setOnClickListener {
-            modoSeleccionado = "Sport"
-            textoDescripcion.text = "Modo Sport activado: potencia máxima y espíritu competitivo."
+            modoSeleccionado = "Race"
+            textoDescripcion.text = "Modo Race activado: potencia máxima y espíritu competitivo."
             animarCambioFondo(R.drawable.bg_modo_sport)
-            mostrarParticulas("Sport")
+            mostrarParticulas("Race")
         }
 
         // BOTÓN ELEGIR
         botonElegir.setOnClickListener {
             if (modoSeleccionado != null) {
-                Toast.makeText(requireContext(), "Modo $modoSeleccionado seleccionado", Toast.LENGTH_SHORT).show()
-                dismiss()
+                val prefs = requireContext().getSharedPreferences("app", 0)
+                prefs.edit().putString("modo_conduccion", modoSeleccionado).apply()
+
+// Animación de salida
+                fondoDialogo.animate()
+                    .alpha(0f)
+                    .scaleX(0.9f)
+                    .scaleY(0.9f)
+                    .setDuration(250)
+                    .withEndAction {
+                        dismiss()
+                    }
+                    .start()
+
             } else {
                 Toast.makeText(requireContext(), "Selecciona un modo primero", Toast.LENGTH_SHORT).show()
             }
+
+            if (modoSeleccionado != null) {
+                val prefs = requireContext().getSharedPreferences("app", 0)
+                prefs.edit().putString("modo_conduccion", modoSeleccionado).apply()
+
+                parentFragmentManager.setFragmentResult("modo_seleccionado", Bundle().apply {
+                    putString("modo", modoSeleccionado)
+                })
+
+                dismiss()
+            }
+
         }
 
         builder.setView(view)
@@ -94,7 +117,7 @@ class ModoConduccionDialogFragment : DialogFragment() {
                 sportAnim.cancelAnimation()
             }
 
-            "Sport" -> {
+            "Race" -> {
                 sportAnim.setAnimation("flames_or_flags.json")
                 sportAnim.visibility = View.VISIBLE
                 sportAnim.playAnimation()

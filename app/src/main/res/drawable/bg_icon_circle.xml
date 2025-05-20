@@ -1,0 +1,5 @@
+<!-- res/drawable/bg_icon_circle.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#AA23274D"/>
+    <corners android:radius="100dp"/>
+</shape>

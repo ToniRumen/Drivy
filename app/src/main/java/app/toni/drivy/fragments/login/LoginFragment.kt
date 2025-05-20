@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import app.toni.drivy.R
 import app.toni.drivy.activities.AuthActivity
 import app.toni.drivy.activities.MainActivity
-import app.toni.drivy.network.LoginRequest
+import app.toni.drivy.network.models.user.LoginRequest
 import app.toni.drivy.network.RetrofitClient
 import okhttp3.ResponseBody
 import retrofit2.Call

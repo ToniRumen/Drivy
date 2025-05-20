@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card_racing"
+    android:padding="20dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Editar coche"
+            android:textColor="#FFD700"
+            android:textSize="20sp"
+            android:fontFamily="@font/racesport"
+            android:layout_marginBottom="16dp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/inputMarca"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Marca"
+            android:inputType="textCapWords"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_edittext"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/inputModelo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Modelo"
+            android:inputType="textCapWords"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_edittext"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/inputAnio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Año"
+            android:inputType="number"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_edittext"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/inputConsumo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Consumo medio"
+            android:inputType="numberDecimal"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#888888"
+            android:background="@drawable/bg_edittext"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tipo de combustible"
+            android:textColor="#FFD700"
+            android:textSize="14sp"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spinnerCombustible"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_edittext"
+            android:spinnerMode="dropdown"
+            android:padding="10dp"
+            android:layout_marginBottom="20dp"/>
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/btnCancelar"
+                android:text="Cancelar"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:backgroundTint="#444444"
+                android:fontFamily="@font/racingsansoneregular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+            <Button
+                android:id="@+id/btnGuardar"
+                android:text="Guardar"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:backgroundTint="#FF0000"
+                android:fontFamily="@font/racingsansoneregular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

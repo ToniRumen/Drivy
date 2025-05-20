@@ -16,51 +16,52 @@
         android:inAnimation="@android:anim/fade_in"
         android:outAnimation="@android:anim/fade_out"
         android:gravity="center"
-        android:padding="16dp" />
+        android:padding="5dp" />
 
-    <!-- 📦 Contenedor para fragments -->
-
-    <!-- ➕ FAB para añadir ruta -->
-    <FrameLayout
-        android:id="@+id/home_fragment_container"
+    <!-- 📱 ViewPager2 para swipe entre fragmentos -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="90dp" />
+        android:layout_marginTop="70dp" />
 
+    <!-- 🚗 Botón Mis Coches -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCoches"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:contentDescription="Añadir coche"
+        android:contentDescription="Mis coches"
         android:src="@drawable/ico_car"
         android:tint="@android:color/white"
         app:backgroundTint="#E7E235"
-        app:layout_anchor="@id/home_fragment_container"
+        app:layout_anchor="@id/viewPager"
         app:layout_anchorGravity="bottom|end" />
 
+    <!-- 🗺 Botón Inicio -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabReciente"
+        android:id="@+id/fabInicio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:contentDescription="Mas reciente"
+        android:contentDescription="Inicio"
         android:src="@drawable/ic_map"
         android:tint="@android:color/white"
         app:backgroundTint="#F02020"
-        app:layout_anchor="@id/home_fragment_container"
+        app:layout_anchor="@id/viewPager"
         app:layout_anchorGravity="bottom|center" />
 
-
+    <!-- 🛣 Botón Rutas -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabNuevaRuta"
+        android:id="@+id/fabRutas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:contentDescription="Añadir ruta"
+        android:contentDescription="Rutas"
         android:src="@drawable/ic_street"
         android:tint="@android:color/white"
         app:backgroundTint="#526AD3"
-        app:layout_anchor="@id/home_fragment_container"
-        app:layout_anchorGravity="bottom|left" />
+        app:layout_anchor="@id/viewPager"
+        app:layout_anchorGravity="bottom|start" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

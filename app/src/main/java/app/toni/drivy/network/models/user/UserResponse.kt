@@ -1,4 +1,4 @@
-package app.toni.drivy.network
+package app.toni.drivy.network.models.user
 
 data class UserResponse(
     val id: Long,

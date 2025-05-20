@@ -13,8 +13,31 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
-        <item name="android:background">@android:color/transparent</item>
+
+    <!-- Racing button style -->
+    <style name="Drivy.RacingButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">#1A1A1A</item>           <!-- Fondo negro suave -->
+        <item name="android:textColor">#FDD500</item>        <!-- Texto rojo DRIVY -->
+        <item name="strokeColor">#FF3C3C</item>              <!-- Borde rojo DRIVY -->
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">16dp</item>
+        <item name="android:fontFamily">@font/racesport</item>
+        <item name="android:elevation">8dp</item>
+        <item name="rippleColor">#33FF3C3C</item>            <!-- Ripple rojo DRIVY con transparencia -->
+        <item name="android:textStyle">bold</item>
+    </style>
+
+
+
+
+
+
+
+    <style name="DialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
+        <item name="android:windowBackground">@drawable/bg_card_racing</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
     </style>
 
 
