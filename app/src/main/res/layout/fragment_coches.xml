@@ -1,25 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/containerCoches"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    tools:context=".fragments.coches.MisCochesFragment">
 
-    <ProgressBar
-        android:id="@+id/progressCoches"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerCoches"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="8dp"
-        tools:listitem="@layout/item_coche"
-        android:paddingBottom="8dp" />
-</LinearLayout>
+        android:padding="16dp">
+
+        <ProgressBar
+            android:id="@+id/progressCoches"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+
+        <TextView
+            android:id="@+id/textSinCoches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No tienes coches todavía"
+            android:textSize="18sp"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:visibility="gone"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginTop="16dp"
+            />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerCoches"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            tools:listitem="@layout/item_coche" />
+
+
+
+    </LinearLayout>
+
+    <!-- FAB en la esquina inferior derecha -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddCar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:contentDescription="Añadir coche"
+        android:src="@drawable/ic_agregar_coche"
+        app:backgroundTint="@color/design_default_color_error"
+        android:visibility="gone" />
+
+</FrameLayout>

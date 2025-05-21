@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -13,9 +14,11 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import app.toni.drivy.R
 import app.toni.drivy.adapters.CocheAdapter
+import app.toni.drivy.dialogs.AnadirCocheDialogFragment
 import app.toni.drivy.dialogs.EditarCocheDialogFragment
 import app.toni.drivy.network.models.car.CarResponse
 import app.toni.drivy.network.RetrofitClient
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +27,7 @@ class MisCochesFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private lateinit var textoSinCoches: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,26 +40,36 @@ class MisCochesFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerCoches)
         progressBar = view.findViewById(R.id.progressCoches)
+        textoSinCoches = view.findViewById(R.id.textSinCoches)
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        val fab = view.findViewById<FloatingActionButton>(R.id.fabAddCar)
+        fab.visibility = View.VISIBLE
+        fab.setOnClickListener {
+            AnadirCocheDialogFragment {
+                recargarMisCoches()
+            }.show(parentFragmentManager, "DialogAddCar")
+        }
 
         recargarMisCoches()
     }
 
     private fun recargarMisCoches() {
-
         val prefs = requireActivity().getSharedPreferences("app", 0)
         val token = prefs.getString("jwt", null) ?: return
 
         progressBar.visibility = View.VISIBLE
         RetrofitClient.instance.getMisCoches("Bearer $token")
             .enqueue(object : Callback<List<CarResponse>> {
-                override fun onResponse(call: Call<List<CarResponse>>, response: Response<List<CarResponse>>) {
+                override fun onResponse(
+                    call: Call<List<CarResponse>>,
+                    response: Response<List<CarResponse>>
+                ) {
                     progressBar.visibility = View.GONE
                     if (response.isSuccessful && response.body() != null) {
                         val coches = response.body()!!
-                        if (coches.isEmpty()) {
-                            Toast.makeText(requireContext(), "No tienes coches aún", Toast.LENGTH_SHORT).show()
-                        }
+                        textoSinCoches.visibility = if (coches.isEmpty()) View.VISIBLE else View.GONE
 
                         recyclerView.adapter = CocheAdapter(
                             coches,
@@ -72,7 +86,7 @@ class MisCochesFragment : Fragment() {
                             },
                             onLongClick = { coche ->
                                 EditarCocheDialogFragment.newInstance(coche) {
-                                    recargarMisCoches() // 🔁 refrescar al guardar
+                                    recargarMisCoches()
                                 }.show(parentFragmentManager, "EditarCocheDialog")
                             }
                         )

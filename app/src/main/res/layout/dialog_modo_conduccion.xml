@@ -44,7 +44,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Eco"
-                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/racesport"
+                    android:textColor="#CC000000"
                     android:textStyle="bold"
                     android:paddingTop="8dp"/>
             </LinearLayout>
@@ -83,7 +84,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Normal"
-                android:textColor="#FFFFFF"
+                android:fontFamily="@font/racesport"
+                android:textColor="#CC000000"
                 android:textStyle="bold"
                 android:paddingTop="8dp"/>
         </LinearLayout>
@@ -114,7 +116,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Sport"
-                    android:textColor="#FFFFFF"
+                    android:fontFamily="@font/racesport"
+                    android:textColor="#CC000000"
                     android:textStyle="bold"
                     android:paddingTop="8dp"/>
             </LinearLayout>
@@ -139,6 +142,7 @@
         android:layout_height="wrap_content"
         android:text="Selecciona un modo de conducción"
         android:textColor="#FFFFFF"
+        android:fontFamily="@font/racingsansoneregular"
         android:textAlignment="center"
         android:textSize="16sp"
         android:padding="12dp" />
@@ -149,6 +153,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Elegir"
+        android:textSize="16dp"
+        android:fontFamily="@font/racingsansoneregular"
         android:padding="12dp"
         android:textAllCaps="true"
         android:textStyle="bold"

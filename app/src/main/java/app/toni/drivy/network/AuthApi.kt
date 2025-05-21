@@ -43,6 +43,14 @@ interface AuthApi {
         @Body request: CocheUpdateRequest
     ): Call<CarResponse>
 
+
+    @POST("/coches")
+    fun crearCoche(@Header("Authorization") token: String, @Body coche: CocheUpdateRequest): Call<CarResponse>
+
+
+
+
+
     @GET("rutas")
     fun getHistorialRutas(@Header("Authorization") token: String): Call<List<RutaResponse>>
 

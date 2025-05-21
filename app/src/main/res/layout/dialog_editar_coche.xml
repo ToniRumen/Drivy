@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Editar coche"
+            android:text="Detalles del coche"
             android:textColor="#FFD700"
             android:textSize="20sp"
             android:fontFamily="@font/racesport"
@@ -73,7 +73,7 @@
             android:layout_height="wrap_content"
             android:text="Tipo de combustible"
             android:textColor="#FFD700"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:fontFamily="@font/racingsansoneregular"
             android:layout_marginBottom="6dp" />
 
@@ -84,6 +84,8 @@
             android:background="@drawable/bg_edittext"
             android:spinnerMode="dropdown"
             android:padding="10dp"
+            android:fontFamily="@font/racingsansoneregular"
+            android:textColor="#FFFFFF"
             android:layout_marginBottom="20dp"/>
 
 
