@@ -239,7 +239,7 @@
                 android:layout_marginStart="24dp"
                 android:layout_marginEnd="24dp"
                 android:progressDrawable="@drawable/custom_progress"
-                android:max="180"
+                android:max="100"
                 android:progress="0" />
 
 
@@ -247,7 +247,6 @@
                 android:id="@+id/textoComentario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Comentario del nivel"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
                 android:fontFamily="@font/racingsansoneregular"

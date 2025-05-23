@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
 import app.toni.drivy.R
@@ -131,7 +132,55 @@ class InicioFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("modo_seleccionado", viewLifecycleOwner) { _, _ ->
             refrescarDatosCocheYRuta()
         }
+
+        parentFragmentManager.setFragmentResultListener("ruta_cargada", viewLifecycleOwner) { _, _ ->
+            recargarVista()
+        }
+
+
+
     }
+
+    private fun recargarVista() {
+        val prefs = requireActivity().getSharedPreferences("app", 0)
+
+        val nombreCoche = prefs.getString("coche_nombre", "Sin selección")
+        val consumoGuardado = prefs.getFloat("coche_consumo", 0.0f)
+        val origenLat = prefs.getString("origen_lat", null)?.toDoubleOrNull()
+        val origenLng = prefs.getString("origen_lng", null)?.toDoubleOrNull()
+        val destinoLat = prefs.getString("destino_lat", null)?.toDoubleOrNull()
+        val destinoLng = prefs.getString("destino_lng", null)?.toDoubleOrNull()
+        val rutaTexto = prefs.getString("ruta_texto", "Ruta no definida")
+
+        textNombreCoche.text = nombreCoche
+        textConsumo.text = String.format("%.1f L/100km", consumoGuardado)
+        view?.findViewById<TextView>(R.id.textRutaNombre)?.text = rutaTexto
+
+        if (origenLat != null && origenLng != null && destinoLat != null && destinoLng != null) {
+            val origenLatLng = LatLng(origenLat, origenLng)
+            val destinoLatLng = LatLng(destinoLat, destinoLng)
+            obtenerRutaReal(origenLatLng, destinoLatLng)
+        }
+
+        mostrarModoSeleccionado()
+    }
+
+    private fun mostrarModoSeleccionado() {
+        val prefs = requireActivity().getSharedPreferences("app", 0)
+        val modo = prefs.getString("modo_conduccion", null) ?: "Normal"
+        prefs.edit().putString("modo_conduccion", modo).apply()
+        when (modo.lowercase()) {
+            "eco" -> textModoSeleccionado.setTextColor(resources.getColor(android.R.color.holo_blue_light, null))
+            "normal" -> textModoSeleccionado.setTextColor(resources.getColor(android.R.color.white, null))
+            "race" -> textModoSeleccionado.setTextColor(resources.getColor(android.R.color.holo_red_light, null))
+        }
+        textModoSeleccionado.text = "Modo ${modo.replaceFirstChar { it.uppercase() }}"
+        if (origenLatLng != null && destinoLatLng != null) {
+            obtenerRutaReal(origenLatLng!!, destinoLatLng!!)
+        }
+    }
+
+
 
     private fun refrescarDatosCocheYRuta() {
         // Refresca datos de coche y recalcula coste/ruta
@@ -145,7 +194,7 @@ class InicioFragment : Fragment() {
 
         // ⬇️ Ajusta el consumo según el modo
         val factor = when (modo.lowercase()) {
-            "eco" -> 0.9f
+            "eco" -> 0.8f
             "race" -> 1.2f
             else -> 1.0f
         }
@@ -209,7 +258,12 @@ class InicioFragment : Fragment() {
                 val route = routesArray.getJSONObject(0)
                 val points = route.getJSONObject("overview_polyline").getString("points")
                 val path = decodePolyline(points)
-                val distanceKm = route.getJSONArray("legs").getJSONObject(0).getJSONObject("distance").getInt("value") / 1000.0
+                val distanceKm = Math.round(
+                    route.getJSONArray("legs")
+                        .getJSONObject(0)
+                        .getJSONObject("distance")
+                        .getInt("value") / 1000.0
+                ).toInt()
 
                 requireActivity().runOnUiThread {
                     googleMap?.clear()
@@ -219,9 +273,9 @@ class InicioFragment : Fragment() {
                     val bounds = LatLngBounds.Builder().apply { path.forEach { include(it) } }.build()
                     googleMap?.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 120))
 
-                    ultimaDistanciaKm = distanceKm
-                    calcularYMostrarCoste(distanceKm)
-                    actualizarBarraYComentario(requireContext().getSharedPreferences("app", 0).getFloat("coche_consumo", 0f), distanceKm)
+                    ultimaDistanciaKm = distanceKm.toDouble()
+                    calcularYMostrarCoste(distanceKm.toDouble())
+                    actualizarBarraYComentario(requireContext().getSharedPreferences("app", 0).getFloat("coche_consumo", 0f), distanceKm.toDouble())
 
                     botonGuardarRuta.visibility = View.VISIBLE
                     botonGuardarRuta.text = "Guardar esta ruta"
@@ -281,20 +335,50 @@ class InicioFragment : Fragment() {
     }
 
     private fun actualizarBarraYComentario(consumo: Float, distanciaKm: Double) {
-        val modo = requireActivity().getSharedPreferences("app", 0).getString("modo_conduccion", "Normal") ?: "Normal"
+        val prefs = requireActivity().getSharedPreferences("app", 0)
+        val modo = prefs.getString("modo_conduccion", "Normal") ?: "Normal"
         val factor = when (modo.lowercase()) {
             "eco" -> 0.9f
             "race" -> 1.2f
             else -> 1.0f
         }
+
+        barraConsumo.max = 100
+
         val ajustado = consumo * factor
-        val porcentaje = ((ajustado * 10f).toInt()).coerceIn(0, 100)
+
+    // Nueva escala personalizada
+        val consumoMaximo = 15.0f
+
+
+
+        // Calcular el porcentaje según el rango personalizado
+        val porcentaje = when {
+            ajustado <= 0f -> 0
+            ajustado >= consumoMaximo -> 100
+            else -> ((ajustado / consumoMaximo) * 100).toInt()
+        }
+
         barraConsumo.progress = porcentaje
         textConsumo.text = String.format("%.1f L/100km", ajustado)
+
+
+        val color = when {
+            ajustado <= 5f -> R.color.verde_consumo
+            ajustado <= 9f -> R.color.amarillo_consumo
+            else -> R.color.rojo_consumo
+
+        }
+        barraConsumo.progressTintList = ContextCompat.getColorStateList(requireContext(), color)
+
+
+
+
+
         textoComentario.text = when {
             ajustado <= 3.5f -> "¡Que disfute para el bolsillo!"
             ajustado <= 5.5f -> "Buen consumo, buen viaje."
-            ajustado <= 7.5f -> "Consumo normal."
+            ajustado <= 7.5f -> "Consumo adecuado."
             ajustado <= 11f -> "La cartera lo notará."
             ajustado <= 13f -> "Consumo alto, haz que valga la pena"
             else -> "¡Mirar el consumo es para mediocres, di que sí!"

@@ -3,5 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="cardSubtle">#C6C7CC</color>
+    <color name="verde_consumo">#4CAF50</color>
+    <color name="amarillo_consumo">#FFEB3B</color>
+    <color name="rojo_consumo">#F44336</color>
 
 </resources>

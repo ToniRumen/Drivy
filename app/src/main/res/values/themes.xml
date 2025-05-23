@@ -13,7 +13,6 @@
         <item name="android:windowFullscreen">true</item>
     </style>
 
-
     <!-- Racing button style -->
     <style name="Drivy.RacingButton" parent="Widget.MaterialComponents.Button">
         <item name="backgroundTint">#1A1A1A</item>           <!-- Fondo negro suave -->

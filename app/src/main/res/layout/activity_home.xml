@@ -1,67 +1,114 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/fondo_inicio"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <!-- 🎯 Texto de bienvenida -->
-    <TextSwitcher
-        android:id="@+id/textSwitcherBienvenida"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:inAnimation="@android:anim/fade_in"
-        android:outAnimation="@android:anim/fade_out"
-        android:gravity="center"
-        android:padding="5dp" />
-
-    <!-- 📱 ViewPager2 para swipe entre fragmentos -->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
+    <!-- 🏠 CONTENIDO PRINCIPAL -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="70dp" />
+        android:background="@drawable/fondo_inicio">
 
-    <!-- 🚗 Botón Mis Coches -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabCoches"
+        <!-- 🔝 Botón hamburguesa personalizado -->
+        <ImageButton
+            android:id="@+id/btnHamburguesa"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="top|start"
+            android:background="@android:color/transparent"
+            android:contentDescription="Abrir menú"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_menu"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <!-- 🎯 Texto de bienvenida -->
+        <TextSwitcher
+            android:id="@+id/textSwitcherBienvenida"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:padding="5dp" />
+
+        <!-- 📱 ViewPager para deslizar entre fragmentos -->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="70dp" />
+
+        <!-- FABs posicionados correctamente -->
+        <FrameLayout
+            android:id="@+id/home_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- 🚗 FAB Coches -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabCoches"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:contentDescription="Mis coches"
+                android:src="@drawable/ico_car"
+                android:tint="@android:color/white"
+                app:backgroundTint="#E7E235" />
+
+            <!-- 🗺 FAB Inicio -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabInicio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:layout_margin="16dp"
+                android:contentDescription="Inicio"
+                android:src="@drawable/ic_map"
+                android:tint="@android:color/white"
+                app:backgroundTint="#F02020" />
+
+            <!-- 🛣 FAB Rutas -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabRutas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|start"
+                android:layout_margin="16dp"
+                android:contentDescription="Rutas"
+                android:src="@drawable/ic_street"
+                android:tint="@android:color/white"
+                app:backgroundTint="#526AD3" />
+        </FrameLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- 🍔 DRAWER + CONTENIDO EXTRA -->
+    <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Mis coches"
-        android:src="@drawable/ico_car"
-        android:tint="@android:color/white"
-        app:backgroundTint="#E7E235"
-        app:layout_anchor="@id/viewPager"
-        app:layout_anchorGravity="bottom|end" />
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="vertical"
+        android:background="@drawable/fondo_drawer_gradiente">
 
-    <!-- 🗺 Botón Inicio -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabInicio"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Inicio"
-        android:src="@drawable/ic_map"
-        android:tint="@android:color/white"
-        app:backgroundTint="#F02020"
-        app:layout_anchor="@id/viewPager"
-        app:layout_anchorGravity="bottom|center" />
+        <!-- Menú de navegación -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigationView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:fitsSystemWindows="true"
+            android:background="@android:color/transparent"
+        app:headerLayout="@layout/drawer_header"
+            app:menu="@menu/menu_drawer"
+            app:itemTextColor="@color/nav_text_color" />
 
-    <!-- 🛣 Botón Rutas -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabRutas"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:contentDescription="Rutas"
-        android:src="@drawable/ic_street"
-        android:tint="@android:color/white"
-        app:backgroundTint="#526AD3"
-        app:layout_anchor="@id/viewPager"
-        app:layout_anchorGravity="bottom|start" />
+        <!-- Contenido extra abajo -->
+        <include layout="@layout/view_tip_y_clima" />
+    </LinearLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

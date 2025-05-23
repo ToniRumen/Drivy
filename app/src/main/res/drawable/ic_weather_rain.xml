@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Nube -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M6,18a4,4 0,1 1,0 -8h1.26A6.5,6.5 0,0 1,18,11a4,4 0,1 1,0 7H6z" />
+
+    <!-- Lluvia (tres gotas) -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M8,20a1,1 0,1 1,-2 0 1,1 0,0 1,2 0zM12,22a1,1 0,1 1,-2 0 1,1 0,0 1,2 0zM16,20a1,1 0,1 1,-2 0 1,1 0,0 1,2 0z" />
+</vector>

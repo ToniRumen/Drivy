@@ -7,9 +7,9 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import app.toni.drivy.R
+import app.toni.drivy.network.RetrofitClient
 import app.toni.drivy.network.models.car.CarResponse
 import app.toni.drivy.network.models.car.CocheUpdateRequest
-import app.toni.drivy.network.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -20,13 +20,17 @@ class EditarCocheDialogFragment : DialogFragment() {
 
     companion object {
         fun newInstance(coche: CarResponse, onUpdated: (() -> Unit)? = null): EditarCocheDialogFragment {
-            val fragment = EditarCocheDialogFragment()
-            val bundle = Bundle()
-            bundle.putSerializable("arg_coche", coche)
-            fragment.arguments = bundle
-            fragment.onUpdatedCallback = onUpdated
-            return fragment
+            return EditarCocheDialogFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("arg_coche", coche)
+                }
+                setOnUpdatedCallback(onUpdated)
+            }
         }
+    }
+
+    fun setOnUpdatedCallback(callback: (() -> Unit)?) {
+        this.onUpdatedCallback = callback
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -38,6 +42,7 @@ class EditarCocheDialogFragment : DialogFragment() {
         val inputAnio = view.findViewById<EditText>(R.id.inputAnio)
         val inputConsumo = view.findViewById<EditText>(R.id.inputConsumo)
         val spinnerCombustible = view.findViewById<Spinner>(R.id.spinnerCombustible)
+
         val opcionesCombustible = listOf("Gasolina", "Diésel", "Híbrido", "Eléctrico")
         spinnerCombustible.adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, opcionesCombustible)
 
@@ -50,7 +55,6 @@ class EditarCocheDialogFragment : DialogFragment() {
         if (indexCombustible != -1) {
             spinnerCombustible.setSelection(indexCombustible)
         }
-
 
         val dialog = AlertDialog.Builder(requireContext())
             .setView(view)
@@ -67,7 +71,6 @@ class EditarCocheDialogFragment : DialogFragment() {
             val consumo = inputConsumo.text.toString().toDoubleOrNull()
             val tipo = spinnerCombustible.selectedItem.toString()
 
-
             if (marca.isEmpty() || modelo.isEmpty() || anio == null || consumo == null || tipo.isEmpty()) {
                 Toast.makeText(requireContext(), "Completa todos los campos", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -82,7 +85,7 @@ class EditarCocheDialogFragment : DialogFragment() {
                     override fun onResponse(call: Call<CarResponse>, response: Response<CarResponse>) {
                         if (response.isSuccessful) {
                             Toast.makeText(requireContext(), "Coche actualizado", Toast.LENGTH_SHORT).show()
-                            onUpdatedCallback?.invoke() // ✅ Llama a recargar
+                            onUpdatedCallback?.invoke() // ✅ Se ejecuta bien tras guardar
                             dismiss()
                         } else {
                             Toast.makeText(requireContext(), "Error al actualizar", Toast.LENGTH_SHORT).show()

@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/contenedorExtrasDrawer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/transparent">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:alpha="0.3"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp" />
+
+    <LinearLayout
+        android:id="@+id/climaContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <ImageView
+            android:id="@+id/iconoClima"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@null"
+            app:tint="@android:color/white" />
+
+        <TextView
+            android:id="@+id/textoClima"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="13sp"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textoTipDelDia"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="💡 Usa modo Eco para ahorrar."
+        android:textColor="@android:color/white"
+        android:textSize="13sp"
+        android:paddingTop="10dp"
+        android:gravity="center"/>
+</LinearLayout>

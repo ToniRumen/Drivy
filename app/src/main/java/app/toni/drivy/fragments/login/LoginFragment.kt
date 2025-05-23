@@ -65,8 +65,6 @@ class LoginFragment : Fragment() {
                         val prefs = requireActivity().getSharedPreferences("app", 0)
                         prefs.edit().putString("jwt", token).apply()
 
-                        Toast.makeText(requireContext(), "Login correcto", Toast.LENGTH_SHORT).show()
-
                         // Ir a MainActivity y limpiar el back stack
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

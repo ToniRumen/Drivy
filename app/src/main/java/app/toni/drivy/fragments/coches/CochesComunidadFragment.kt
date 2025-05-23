@@ -23,6 +23,7 @@ class CochesComunidadFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var progressBar: ProgressBar
+    private var cochesAdapter: CocheAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +38,15 @@ class CochesComunidadFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressCoches)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
+        cargarCochesComunidad()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cargarCochesComunidad() // 🔁 Refresca al volver a esta pestaña
+    }
+
+    private fun cargarCochesComunidad() {
         val prefs = requireActivity().getSharedPreferences("app", 0)
         val token = prefs.getString("jwt", null)
 
@@ -55,14 +65,14 @@ class CochesComunidadFragment : Fragment() {
                                 Toast.makeText(requireContext(), "Aún no hay coches compartidos", Toast.LENGTH_SHORT).show()
                             }
 
-                            recyclerView.adapter = CocheAdapter(
+                            cochesAdapter = CocheAdapter(
                                 coches,
                                 mostrarCreador = true,
                                 onCocheClick = { cocheSeleccionado ->
-                                    val prefs = requireActivity().getSharedPreferences("app", 0)
                                     prefs.edit()
                                         .putString("coche_nombre", "${cocheSeleccionado.marca} ${cocheSeleccionado.modelo}")
                                         .putFloat("coche_consumo", cocheSeleccionado.consumoMedio.toFloat())
+                                        .putString("tipo_combustible", cocheSeleccionado.tipoCombustible)
                                         .apply()
                                     val activity = requireActivity() as? AppCompatActivity
                                     val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)
@@ -72,7 +82,7 @@ class CochesComunidadFragment : Fragment() {
                                     Toast.makeText(requireContext(), "No puedes editar coches de la comunidad", Toast.LENGTH_SHORT).show()
                                 }
                             )
-
+                            recyclerView.adapter = cochesAdapter
                         } else {
                             Toast.makeText(requireContext(), "Error al cargar coches", Toast.LENGTH_SHORT).show()
                         }

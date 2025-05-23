@@ -2,6 +2,7 @@ package app.toni.drivy.network
 
 import app.toni.drivy.network.models.car.CarResponse
 import app.toni.drivy.network.models.car.CocheUpdateRequest
+import app.toni.drivy.network.models.car.Gasolinera
 import app.toni.drivy.network.models.user.LoginRequest
 import app.toni.drivy.network.models.user.RegisterRequest
 import app.toni.drivy.network.models.user.RutaRequest
@@ -16,6 +17,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface AuthApi {
 
@@ -29,6 +31,8 @@ interface AuthApi {
     fun getPerfil(
         @Header("Authorization") token: String
     ): Call<UserResponse>
+
+
 
     @GET("coches")
     fun getMisCoches(@Header("Authorization") token: String): Call<List<CarResponse>>
@@ -47,6 +51,8 @@ interface AuthApi {
     @POST("/coches")
     fun crearCoche(@Header("Authorization") token: String, @Body coche: CocheUpdateRequest): Call<CarResponse>
 
+    @DELETE("coches/{id}")
+    fun eliminarCoche(@Path("id") id: Int, @Header("Authorization") token: String): Call<Void>
 
 
 
@@ -65,6 +71,14 @@ interface AuthApi {
         @Header("Authorization") token: String,
         @Path("id") id: Long
     ): Call<Void>
+
+
+    @GET("gasolineras/cercanas")
+    fun getGasolinerasCercanas(
+        @Query("lat") latitud: Double,
+        @Query("lon") longitud: Double,
+        @Header("Authorization") token: String
+    ): Call<List<Gasolinera>>
 
 
 }

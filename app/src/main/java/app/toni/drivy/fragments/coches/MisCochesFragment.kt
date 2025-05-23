@@ -85,10 +85,40 @@ class MisCochesFragment : Fragment() {
                                 viewPager?.currentItem = 1
                             },
                             onLongClick = { coche ->
-                                EditarCocheDialogFragment.newInstance(coche) {
-                                    recargarMisCoches()
-                                }.show(parentFragmentManager, "EditarCocheDialog")
+                                val opciones = arrayOf("Editar", "Eliminar")
+                                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                                    .setTitle("Opciones para ${coche.marca} ${coche.modelo}")
+                                    .setItems(opciones) { _, which ->
+                                        when (which) {
+                                            0 -> { // Editar
+                                                EditarCocheDialogFragment.newInstance(coche) {
+                                                    recargarMisCoches()
+                                                }.show(parentFragmentManager, "EditarCocheDialog")
+                                            }
+                                            1 -> { // Eliminar
+                                                val prefs = requireActivity().getSharedPreferences("app", 0)
+                                                val token = prefs.getString("jwt", null) ?: return@setItems
+                                                RetrofitClient.instance.eliminarCoche(coche.id.toInt(), "Bearer $token")
+                                                    .enqueue(object : Callback<Void> {
+                                                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                                                            if (response.isSuccessful) {
+                                                                Toast.makeText(requireContext(), "Coche eliminado", Toast.LENGTH_SHORT).show()
+                                                                recargarMisCoches()
+                                                            } else {
+                                                                Toast.makeText(requireContext(), "Error al eliminar", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+
+                                                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                                                            Toast.makeText(requireContext(), "Error de red: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                                        }
+                                                    })
+                                            }
+                                        }
+                                    }
+                                    .show()
                             }
+
                         )
                     } else {
                         Toast.makeText(requireContext(), "Error al cargar coches", Toast.LENGTH_SHORT).show()
