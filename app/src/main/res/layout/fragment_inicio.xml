@@ -258,27 +258,66 @@
                 android:layout_marginBottom="0dp"/>
         </LinearLayout>
 
-        <!-- Coste estimado separado -->
-        <LinearLayout
+
+        <!-- Coste estimado + botón ida/vuelta -->
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:background="@drawable/bg_card_racing"
             android:padding="16dp"
-            android:elevation="6dp"
-            android:layout_marginBottom="5dp">
+            android:layout_marginBottom="12dp"
+            android:elevation="6dp">
 
-            <TextView
-                android:id="@+id/textoCosteEstimado"
+            <!-- Botón esquina -->
+            <ImageButton
+                android:id="@+id/btnIdaVuelta"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/bg_toggle_idavuelta"
+                android:padding="6dp"
+                android:src="@drawable/ic_idavuelta"
+                android:contentDescription="Ida y vuelta"
+                android:scaleType="centerInside"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"/>
+
+            <LinearLayout
+                android:id="@+id/costeContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Coste estimado: --"
-                android:textColor="#FFD700"
-                android:textSize="16sp"
-                android:fontFamily="@font/racesport"
-                android:textStyle="bold"
-                android:textAlignment="center"/>
-        </LinearLayout>
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="4dp">
+
+                <!-- Texto que cambia -->
+                <TextView
+                    android:id="@+id/textoCosteEtiqueta"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Coste estimado"
+                    android:textColor="#FFD700"
+                    android:textSize="17sp"
+                    android:fontFamily="@font/racingsansoneregular"
+                    android:textStyle="bold"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="4dp"/>
+
+                <!-- Precio centrado -->
+                <TextView
+                    android:id="@+id/textoCosteEstimado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-- €"
+                    android:textColor="#FFFFFF"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/racesport"
+                    android:textStyle="bold"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+
 
 
         <com.google.android.material.button.MaterialButton

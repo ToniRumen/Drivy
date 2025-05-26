@@ -6,5 +6,9 @@
     <color name="verde_consumo">#4CAF50</color>
     <color name="amarillo_consumo">#FFEB3B</color>
     <color name="rojo_consumo">#F44336</color>
+    <color name="ripple_light">#66FFFFFF</color>
+    <color name="rojo_racing">#FF4444</color>
+
+
 
 </resources>

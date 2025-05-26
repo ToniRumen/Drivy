@@ -32,6 +32,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.math.abs
 
 class HomeActivity : AppCompatActivity() {
 
@@ -41,6 +42,7 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var fabCoches: FloatingActionButton
     private lateinit var viewPager: ViewPager2
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -57,12 +59,34 @@ class HomeActivity : AppCompatActivity() {
         // ViewPager
         viewPager.adapter = ScreenSlidePagerAdapter(this)
         viewPager.currentItem = 1
+        viewPager.setPageTransformer(FadeSlidePageTransformer())
         actualizarFABs(1)
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 actualizarFABs(position)
             }
         })
+
+
+        fabInicio.setOnClickListener {
+            animacionBoton(fabInicio)
+                viewPager.currentItem = 1
+        }
+
+        fabRutas.setOnClickListener {
+            animacionBoton(fabRutas)
+            viewPager.currentItem = 0
+
+        }
+
+        fabCoches.setOnClickListener {
+            animacionBoton(fabCoches)
+                viewPager.currentItem = 2
+
+        }
+
+
+
 
         // Drawer
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
@@ -101,6 +125,27 @@ class HomeActivity : AppCompatActivity() {
 
         // Clima abajo
         cargarClimaActual()
+    }
+
+
+    class FadeSlidePageTransformer : ViewPager2.PageTransformer {
+        override fun transformPage(page: View, position: Float) {
+            page.apply {
+                when {
+                    position < -1 -> { // Página fuera de la izquierda
+                        alpha = 0f
+                    }
+                    position <= 1 -> { // [-1,1]
+                        alpha = 1 - abs(position)
+                        translationX = -position * page.width * 0.3f
+                        scaleY = 0.95f + (1 - abs(position)) * 0.05f
+                    }
+                    else -> { // Página fuera de la derecha
+                        alpha = 0f
+                    }
+                }
+            }
+        }
     }
 
     private fun cargarClimaActual() {
@@ -166,6 +211,35 @@ class HomeActivity : AppCompatActivity() {
         fabRutas.visibility = if (position == 0) View.GONE else View.VISIBLE
         fabCoches.visibility = if (position == 2) View.GONE else View.VISIBLE
     }
+
+    fun animacionBoton(fab: FloatingActionButton) {
+        fab.animate()
+            .scaleX(0.85f)
+            .scaleY(0.85f)
+            .setDuration(90)
+            .withEndAction {
+                fab.animate()
+                    .scaleX(1.08f)
+                    .scaleY(1.08f)
+                    .setDuration(90)
+                    .withEndAction {
+                        fab.animate()
+                            .scaleX(1f)
+                            .scaleY(1f)
+                            .setDuration(80)
+                            .start()
+                    }
+                    .start()
+            }
+            .start()
+    }
+
+
+
+
+
+
+
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = 3

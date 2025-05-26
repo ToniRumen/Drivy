@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+
+    <!-- Flecha ida (blanca) -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,22h20l-8,-8 2.82,-2.82L43.66,24 22.82,41.82 20,39l8,-8H8v-4z" />
+
+    <!-- Flecha vuelta (roja) -->
+    <path
+        android:fillColor="#F8D400"
+        android:pathData="M40,26H20l8,8 -2.82,2.82L4.34,24l20.84,-17.82L28,9l-8,8h20v4z"/>
+</vector>

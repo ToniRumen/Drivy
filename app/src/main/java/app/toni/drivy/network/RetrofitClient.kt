@@ -8,8 +8,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitClient {
 
-    private const val BASE_URL = "http://172.20.10.3:8080/"
+    private const val BASE_URL = "http://192.168.18.60:8080/"
     private const val PRECIOIL_BASE_URL = "https://api.precioil.es/"
+
+    //Ordenador Torre: 192.168.18.60
+
 
     // Instancia para tu backend
     private val retrofit: Retrofit by lazy {

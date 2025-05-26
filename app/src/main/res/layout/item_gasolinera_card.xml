@@ -16,9 +16,16 @@
         android:layout_height="wrap_content"
         android:text="Nombre"
         android:textColor="#FFD700"
-        android:textSize="16sp"
+        android:textSize="25sp"
         android:textStyle="bold"
         android:fontFamily="@font/racingsansoneregular" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        android:background="#55FFFFFF" />
 
     <TextView
         android:id="@+id/textDireccion"
@@ -26,26 +33,52 @@
         android:layout_height="wrap_content"
         android:text="Dirección"
         android:textColor="#CCCCCC"
-        android:textSize="14sp"
+        android:textSize="12sp"
         android:fontFamily="@font/racingsansoneregular" />
 
-    <TextView
-        android:id="@+id/textPrecio"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="1.59 €/L"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:fontFamily="@font/racingsansoneregular"
-        android:layout_marginBottom="8dp"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical">
 
-    <Button
-        android:id="@+id/btnVisitar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Visitar"
-        android:textColor="#FFFFFF"
-        android:backgroundTint="#D32F2F"
-        android:fontFamily="@font/racingsansoneregular"
-        android:elevation="3dp"/>
+        <TextView
+            android:id="@+id/textPrecio"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="1.59 €/L"
+            android:textColor="@android:color/white"
+            android:textSize="25sp"
+            android:fontFamily="@font/racingsansoneregular" />
+
+
+        <TextView
+            android:id="@+id/textDistancia"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0 km"
+            android:fontFamily="@font/racingsansoneregular"
+        android:textColor="@android:color/darker_gray"
+            android:textSize="20sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="30dp"
+            />
+
+
+
+        <ImageButton
+            android:id="@+id/btnVisitar"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_mapa"
+            android:background="@drawable/bg_boton_racing_circle"
+            android:contentDescription="Ver en mapa"
+            android:elevation="4dp" />
+    </LinearLayout>
+
+
+
 </LinearLayout>

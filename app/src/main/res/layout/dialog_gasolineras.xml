@@ -6,25 +6,36 @@
     android:background="@drawable/bg_card_racing"
     android:padding="16dp">
 
-    <!-- Botón moderno de actualizar arriba -->
+    <!-- Contenido con scroll -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:layout_weight="1"
+        android:maxHeight="500dp">
+
+        <LinearLayout
+            android:id="@+id/containerGasolineras"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:divider="?android:attr/dividerHorizontal"
+            android:showDividers="middle" />
+    </ScrollView>
+
+    <!-- Botón ACTUALIZAR ABAJO, más compacto -->
     <Button
         android:id="@+id/btnActualizarGasolineras"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
         android:text="Actualizar"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:textColor="@android:color/white"
         android:background="@drawable/bg_boton_racing_ripple"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:elevation="4dp" />
-
-
-    <!-- Contenedor de las cards de gasolineras (se rellena dinámicamente) -->
-    <LinearLayout
-        android:id="@+id/containerGasolineras"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" />
-
 </LinearLayout>

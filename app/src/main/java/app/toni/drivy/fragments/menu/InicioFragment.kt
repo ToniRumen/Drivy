@@ -48,6 +48,8 @@ class InicioFragment : Fragment() {
     private var origenLatLng: LatLng? = null
     private var destinoLatLng: LatLng? = null
     private var ultimaDistanciaKm: Double = 0.0
+    private var idaYVueltaActiva = false
+
 
     private val API_KEY = "AIzaSyDEyTgGFym-4Nci_cDiWOy-wzRPB2jJBU0"
 
@@ -199,12 +201,10 @@ class InicioFragment : Fragment() {
 
                         GasolineraDialogFragment(
                             gasolineras = listaOriginal,
-                            tipoCombustible = tipoCombustible,
-                            precioEstimado = precioPorDefecto,
-                            onActualizar = { /* Aquí puedes refrescar si quieres */ }
-                        ) { gasolinera, precioRealUsado ->
-                            actualizarTarjetaGasolinera(gasolinera, precioRealUsado)
-                        }.show(parentFragmentManager, "GasolineraDialog")
+                            onSeleccion = { g -> actualizarTarjetaGasolinera(g) }
+                        ).show(parentFragmentManager, "GasolineraDialog")
+
+
                     } else {
                         Toast.makeText(requireContext(), "No se pudieron cargar gasolineras", Toast.LENGTH_LONG).show()
                     }
@@ -230,6 +230,20 @@ class InicioFragment : Fragment() {
         parentFragmentManager.setFragmentResultListener("ruta_cargada", viewLifecycleOwner) { _, _ ->
             recargarVista()
         }
+
+        val btnIdaVuelta = view.findViewById<ImageButton>(R.id.btnIdaVuelta)
+
+        btnIdaVuelta.setOnClickListener {
+            idaYVueltaActiva = !idaYVueltaActiva
+            btnIdaVuelta.isSelected = idaYVueltaActiva
+            if (origenLatLng != null && destinoLatLng != null) {
+                obtenerRutaReal(origenLatLng!!, destinoLatLng!!)
+            }
+        }
+
+
+
+
     }
 
     // Esta función solo la usas si tu backend expone recarga manual
@@ -266,14 +280,6 @@ class InicioFragment : Fragment() {
                     ?.key?.let { it / 100.0 } ?: 1.65
 
                 progress.dismiss()
-                GasolineraDialogFragment(
-                    gasolineras = listaOriginal,
-                    tipoCombustible = tipoCombustible,
-                    precioEstimado = precioPorDefecto,
-                    onActualizar = { recargarGasolinerasDesdeBackend(lat, lon, tipoCombustible) }
-                ) { gasolinera, precio ->
-                    actualizarTarjetaGasolinera(gasolinera, precio)
-                }.show(parentFragmentManager, "GasolineraDialog")
             } catch (e: Exception) {
                 progress.dismiss()
                 Toast.makeText(requireContext(), "Error al actualizar gasolineras", Toast.LENGTH_SHORT).show()
@@ -355,12 +361,29 @@ class InicioFragment : Fragment() {
         return if (lat != null && lng != null) LatLng(lat, lng) else null
     }
 
-    private fun actualizarTarjetaGasolinera(g: Gasolinera, precio: Double) {
+    private fun actualizarTarjetaGasolinera(g: Gasolinera) {
+        val prefs = requireActivity().getSharedPreferences("app", 0)
+        val tipo = prefs.getString("tipo_combustible", "Gasolina")?.lowercase()
+
+        val precio = when (tipo) {
+            "gasolina", "gasolina 95" -> g.precioGasolina95
+            "gasolina 98" -> g.precioGasolina98
+            "diésel", "diesel" -> g.precioDiesel
+            "híbrido" -> g.precioHibrido
+            "eléctrico" -> g.precioElectrico
+            else -> g.precioGasolina95
+        }
+
         view?.findViewById<TextView>(R.id.textoGasolineraNombre)?.text = g.nombre
         view?.findViewById<TextView>(R.id.textoGasolineraPrecio)?.text = String.format("%.2f €/L", precio)
-        requireActivity().getSharedPreferences("app", 0).edit().putFloat("precio_litro", precio.toFloat()).apply()
-        if (origenLatLng != null && destinoLatLng != null) obtenerRutaReal(origenLatLng!!, destinoLatLng!!)
+
+        prefs.edit().putFloat("precio_litro", precio.toFloat()).apply()
+
+        if (origenLatLng != null && destinoLatLng != null) {
+            obtenerRutaReal(origenLatLng!!, destinoLatLng!!)
+        }
     }
+
 
     private fun obtenerRutaReal(origen: LatLng, destino: LatLng) {
         val url = "https://maps.googleapis.com/maps/api/directions/json?origin=${origen.latitude},${origen.longitude}&destination=${destino.latitude},${destino.longitude}&mode=driving&key=$API_KEY"
@@ -447,8 +470,17 @@ class InicioFragment : Fragment() {
             else -> 1.0
         }
         val consumoAjustado = consumo * factor
-        val coste = (consumoAjustado / 100.0) * distanciaKm * precio.toDouble()
-        view?.findViewById<TextView>(R.id.textoCosteEstimado)?.text = String.format("Coste estimado: %.2f €", coste)
+        val distanciaFinal = if (idaYVueltaActiva) distanciaKm * 2 else distanciaKm
+        val coste = (consumoAjustado / 100.0) * distanciaFinal * precio.toDouble()
+
+
+        val etiqueta = if (idaYVueltaActiva) "Coste ida/vuelta" else "Coste estimado"
+        view?.findViewById<TextView>(R.id.textoCosteEtiqueta)?.text = etiqueta
+
+        val textoPrecio = String.format("%.2f €", coste)
+        view?.findViewById<TextView>(R.id.textoCosteEstimado)?.text = textoPrecio
+
+
     }
 
     private fun actualizarBarraYComentario(consumo: Float, distanciaKm: Double) {
