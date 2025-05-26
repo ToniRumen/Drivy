@@ -1,5 +1,6 @@
 package app.toni.drivy.network
 
+
 import app.toni.drivy.network.models.car.CarResponse
 import app.toni.drivy.network.models.car.CocheUpdateRequest
 import app.toni.drivy.network.models.car.Gasolinera
@@ -12,6 +13,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -73,12 +75,11 @@ interface AuthApi {
     ): Call<Void>
 
 
-    @GET("gasolineras/cercanas")
-    fun getGasolinerasCercanas(
-        @Query("lat") latitud: Double,
-        @Query("lon") longitud: Double,
-        @Header("Authorization") token: String
-    ): Call<List<Gasolinera>>
+    @GET("EstacionesTerrestres/")
+    suspend fun getGasolineras(): Gasolinera
 
+
+    @POST("admin/gasolineras/recargar")
+    suspend fun recargarGasolineras(): Response<String>
 
 }

@@ -49,7 +49,7 @@ class RutasFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        RetrofitClient.instance.getHistorialRutas("Bearer $token")
+        RetrofitClient.authApi.getHistorialRutas("Bearer $token")
             .enqueue(object : Callback<List<RutaResponse>> {
                 override fun onResponse(call: Call<List<RutaResponse>>, response: Response<List<RutaResponse>>) {
                     progressBar.visibility = View.GONE
@@ -155,7 +155,7 @@ class RutasFragment : Fragment() {
 
         progressBar.visibility = View.VISIBLE
 
-        RetrofitClient.instance.eliminarRuta("Bearer $token", id)
+        RetrofitClient.authApi.eliminarRuta("Bearer $token", id)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     progressBar.visibility = View.GONE

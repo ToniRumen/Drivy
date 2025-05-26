@@ -1,18 +1,24 @@
 package app.toni.drivy.fragments.menu
 
 import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import app.toni.drivy.network.models.car.EstacionServicio
+import app.toni.drivy.network.models.car.Gasolinera
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import app.toni.drivy.R
-import app.toni.drivy.dialogs.*
+import app.toni.drivy.dialogs.GasolineraDialogFragment
+import app.toni.drivy.dialogs.ModoConduccionDialogFragment
+import app.toni.drivy.dialogs.DialogSeleccionCiudad
 import app.toni.drivy.network.RetrofitClient
-import app.toni.drivy.network.models.car.Gasolinera
 import app.toni.drivy.network.models.user.RutaRequest
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -21,8 +27,9 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.HttpURLConnection
 import java.net.URL
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,7 +71,6 @@ class InicioFragment : Fragment() {
         mapView.onCreate(savedInstanceState)
         MapsInitializer.initialize(requireContext(), MapsInitializer.Renderer.LATEST) {}
 
-        // Refrescar al entrar
         refrescarDatosCocheYRuta()
 
         mapView.getMapAsync {
@@ -78,17 +84,17 @@ class InicioFragment : Fragment() {
             }
         }
 
-        // Botón de cambiar modo conducción
+        // Cambiar modo conducción
         view.findViewById<LinearLayout>(R.id.tarjetaModoConduccion).setOnClickListener {
             ModoConduccionDialogFragment().show(parentFragmentManager, "ModoDialog")
         }
 
-        // Botón de seleccionar coche
+        // Seleccionar coche
         view.findViewById<LinearLayout>(R.id.tarjetaCoche).setOnClickListener {
             (requireActivity() as? AppCompatActivity)?.findViewById<ViewPager2>(R.id.viewPager)?.currentItem = 2
         }
 
-        // Botón seleccionar ruta
+        // Seleccionar ruta
         view.findViewById<LinearLayout>(R.id.tarjetaRuta).setOnClickListener {
             DialogSeleccionCiudad().show(parentFragmentManager, "DialogRuta")
         }
@@ -115,35 +121,168 @@ class InicioFragment : Fragment() {
             }
         }
 
-        // Botón seleccionar gasolinera
+        // Seleccionar gasolinera
+        // Seleccionar gasolinera
         view.findViewById<LinearLayout>(R.id.tarjetaGasolinera).setOnClickListener {
-            val lista = cargarGasolinerasLocales()
-            GasolineraDialogFragment(lista) {
-                actualizarTarjetaGasolinera(it)
-            }.show(parentFragmentManager, "GasolineraDialog")
+            val prefs = requireActivity().getSharedPreferences("app", 0)
+            val tipoCombustible = prefs.getString("tipo_combustible", "Gasolina") ?: "Gasolina"
+            val lat = origenLatLng?.latitude ?: 40.42
+            val lon = origenLatLng?.longitude ?: -3.70
+
+            val progress = ProgressDialog.show(
+                requireContext(),
+                null,
+                "Cargando gasolineras cercanas...",
+                true,
+                false
+            )
+
+            lifecycleScope.launch {
+                try {
+                    val response = withContext(Dispatchers.IO) {
+                        app.toni.drivy.network.RetrofitClient.precioilApi.obtenerEstacionesCercanas(
+                            latitud = lat,
+                            longitud = lon,
+                            radio = 10,
+                            pagina = 1,
+                            limite = 20
+                        )
+                    }
+                    progress.dismiss()
+
+                    if (response.isSuccessful && response.body() != null) {
+                        val listaOriginal = response.body()!!.map { estacion ->
+                            Gasolinera(
+                                nombre = estacion.rotulo ?: "",
+                                direccion = estacion.direccion ?: "",
+                                horario = estacion.horario ?: "",
+                                precioGasolina95 = estacion.gasolina95 ?: 0.0,
+                                precioGasolina98 = estacion.gasolina98 ?: 0.0,
+                                precioDiesel = estacion.diesel ?: 0.0,
+                                precioHibrido = 0.0,
+                                precioElectrico = 0.0,
+                                lat = estacion.latitud ?: 0.0,
+                                lon = estacion.longitud ?: 0.0
+                            )
+                        }
+
+                        // --- DEBUG: Mira todos los precios que llegan ---
+                        val preciosTodos = listaOriginal.map {
+                            it.precioGasolina95 to it.precioGasolina98 to it.precioDiesel
+                        }
+                        Log.d("GASOLINERAS", "Precios de estaciones: $preciosTodos")
+
+                        // Calcula la moda de precios
+                        val preciosValidos = listaOriginal.mapNotNull { gasolinera ->
+                            when (tipoCombustible.lowercase()) {
+                                "gasolina", "gasolina 95" -> gasolinera.precioGasolina95.takeIf { it > 0 }
+                                "gasolina 98" -> gasolinera.precioGasolina98.takeIf { it > 0 }
+                                "diésel", "diesel" -> gasolinera.precioDiesel.takeIf { it > 0 }
+                                "híbrido" -> gasolinera.precioHibrido.takeIf { it > 0 }
+                                "eléctrico" -> gasolinera.precioElectrico.takeIf { it > 0 }
+                                else -> gasolinera.precioGasolina95.takeIf { it > 0 }
+                            }
+                        }
+
+                        Log.d("GASOLINERAS", "Precios válidos para $tipoCombustible: $preciosValidos")
+
+                        val conteo = preciosValidos
+                            .groupingBy { Math.round(it * 100).toInt() }
+                            .eachCount()
+                        val entryMax = conteo.entries.maxByOrNull { entry -> entry.value }
+                        // Si no hay moda pero hay algún precio válido, usamos el mínimo. Si no, 1.65
+                        val precioPorDefecto = when {
+                            entryMax != null -> entryMax.key / 100.0
+                            preciosValidos.isNotEmpty() -> preciosValidos.minOrNull() ?: 1.65
+                            else -> 1.65
+                        }
+
+                        GasolineraDialogFragment(
+                            gasolineras = listaOriginal,
+                            tipoCombustible = tipoCombustible,
+                            precioEstimado = precioPorDefecto,
+                            onActualizar = { /* Aquí puedes refrescar si quieres */ }
+                        ) { gasolinera, precioRealUsado ->
+                            actualizarTarjetaGasolinera(gasolinera, precioRealUsado)
+                        }.show(parentFragmentManager, "GasolineraDialog")
+                    } else {
+                        Toast.makeText(requireContext(), "No se pudieron cargar gasolineras", Toast.LENGTH_LONG).show()
+                    }
+                } catch (e: Exception) {
+                    progress.dismiss()
+                    Toast.makeText(requireContext(), "Error: " + (e.localizedMessage ?: e.toString()), Toast.LENGTH_LONG).show()
+                    Log.e("Gasolineras", "Error cargando", e)
+                }
+            }
         }
+
+
+
 
         // Botón guardar ruta
         botonGuardarRuta.setOnClickListener {
             confirmarYGuardarRuta()
         }
 
-        // Listener para modo de conducción actualizado
         parentFragmentManager.setFragmentResultListener("modo_seleccionado", viewLifecycleOwner) { _, _ ->
             refrescarDatosCocheYRuta()
         }
-
         parentFragmentManager.setFragmentResultListener("ruta_cargada", viewLifecycleOwner) { _, _ ->
             recargarVista()
         }
+    }
 
+    // Esta función solo la usas si tu backend expone recarga manual
+    private fun recargarGasolinerasDesdeBackend(lat: Double, lon: Double, tipoCombustible: String) {
+        val progress = ProgressDialog.show(
+            requireContext(),
+            null,
+            "Actualizando gasolineras...",
+            true,
+            false
+        )
 
+        lifecycleScope.launch {
+            try {
+                // Si tienes endpoint para recargar, usa aquí RetrofitClient.gasolineraApi.recargarGasolineras()
+                val listaOriginal = withContext(Dispatchers.IO) {
+                    RetrofitClient.gasolineraApi.getGasolinerasCercanas(lat, lon)
+                } as List<app.toni.drivy.network.models.car.Gasolinera>
+                val preciosValidos = listaOriginal.mapNotNull {
+                    when (tipoCombustible.lowercase()) {
+                        "gasolina", "gasolina 95" -> it.precioGasolina95.takeIf { p -> p > 0 }
+                        "gasolina 98" -> it.precioGasolina98.takeIf { p -> p > 0 }
+                        "diésel", "diesel" -> it.precioDiesel.takeIf { p -> p > 0 }
+                        "híbrido" -> it.precioHibrido.takeIf { p -> p > 0 }
+                        "eléctrico" -> it.precioElectrico.takeIf { p -> p > 0 }
+                        else -> it.precioGasolina95.takeIf { p -> p > 0 }
+                    }
+                }
 
+                val precioPorDefecto = preciosValidos
+                    .groupingBy { Math.round(it * 100).toInt() }
+                    .eachCount()
+                    .maxByOrNull { it.value }
+                    ?.key?.let { it / 100.0 } ?: 1.65
+
+                progress.dismiss()
+                GasolineraDialogFragment(
+                    gasolineras = listaOriginal,
+                    tipoCombustible = tipoCombustible,
+                    precioEstimado = precioPorDefecto,
+                    onActualizar = { recargarGasolinerasDesdeBackend(lat, lon, tipoCombustible) }
+                ) { gasolinera, precio ->
+                    actualizarTarjetaGasolinera(gasolinera, precio)
+                }.show(parentFragmentManager, "GasolineraDialog")
+            } catch (e: Exception) {
+                progress.dismiss()
+                Toast.makeText(requireContext(), "Error al actualizar gasolineras", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun recargarVista() {
         val prefs = requireActivity().getSharedPreferences("app", 0)
-
         val nombreCoche = prefs.getString("coche_nombre", "Sin selección")
         val consumoGuardado = prefs.getFloat("coche_consumo", 0.0f)
         val origenLat = prefs.getString("origen_lat", null)?.toDoubleOrNull()
@@ -161,7 +300,6 @@ class InicioFragment : Fragment() {
             val destinoLatLng = LatLng(destinoLat, destinoLng)
             obtenerRutaReal(origenLatLng, destinoLatLng)
         }
-
         mostrarModoSeleccionado()
     }
 
@@ -180,10 +318,7 @@ class InicioFragment : Fragment() {
         }
     }
 
-
-
     private fun refrescarDatosCocheYRuta() {
-        // Refresca datos de coche y recalcula coste/ruta
         val prefs = requireActivity().getSharedPreferences("app", 0)
         val nombreCoche = prefs.getString("coche_nombre", "Sin selección")
         val consumoGuardado = prefs.getFloat("coche_consumo", 0f)
@@ -191,14 +326,11 @@ class InicioFragment : Fragment() {
         val modo = prefs.getString("modo_conduccion", "Normal") ?: "Normal"
 
         textNombreCoche.text = nombreCoche
-
-        // ⬇️ Ajusta el consumo según el modo
         val factor = when (modo.lowercase()) {
             "eco" -> 0.8f
             "race" -> 1.2f
             else -> 1.0f
         }
-
         textConsumo.text = String.format("%.1f L/100km", consumoGuardado)
         textModoSeleccionado.text = "Modo ${modo.replaceFirstChar { it.uppercase() }}"
 
@@ -208,7 +340,6 @@ class InicioFragment : Fragment() {
             else -> textModoSeleccionado.setTextColor(resources.getColor(android.R.color.white, null))
         }
 
-        // Recalcular si hay ruta y coche
         origenLatLng = getLatLngFromPrefs(prefs, "origen")
         destinoLatLng = getLatLngFromPrefs(prefs, "destino")
 
@@ -218,30 +349,16 @@ class InicioFragment : Fragment() {
         }
     }
 
-    private fun cargarGasolinerasLocales(): List<Gasolinera> {
-        return try {
-            val json = requireContext().assets.open("gasolineras.json")
-                .bufferedReader()
-                .use { it.readText() }
-
-            val type = object : TypeToken<List<Gasolinera>>() {}.type
-            Gson().fromJson(json, type)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
-        }
-    }
-
     private fun getLatLngFromPrefs(prefs: SharedPreferences, keyPrefix: String): LatLng? {
         val lat = prefs.getString("${keyPrefix}_lat", null)?.toDoubleOrNull()
         val lng = prefs.getString("${keyPrefix}_lng", null)?.toDoubleOrNull()
         return if (lat != null && lng != null) LatLng(lat, lng) else null
     }
 
-    private fun actualizarTarjetaGasolinera(g: Gasolinera) {
+    private fun actualizarTarjetaGasolinera(g: Gasolinera, precio: Double) {
         view?.findViewById<TextView>(R.id.textoGasolineraNombre)?.text = g.nombre
-        view?.findViewById<TextView>(R.id.textoGasolineraPrecio)?.text = String.format("%.2f €/L", g.precioGasolina95)
-        requireActivity().getSharedPreferences("app", 0).edit().putFloat("precio_litro", g.precioGasolina95.toFloat()).apply()
+        view?.findViewById<TextView>(R.id.textoGasolineraPrecio)?.text = String.format("%.2f €/L", precio)
+        requireActivity().getSharedPreferences("app", 0).edit().putFloat("precio_litro", precio.toFloat()).apply()
         if (origenLatLng != null && destinoLatLng != null) obtenerRutaReal(origenLatLng!!, destinoLatLng!!)
     }
 
@@ -344,15 +461,8 @@ class InicioFragment : Fragment() {
         }
 
         barraConsumo.max = 100
-
         val ajustado = consumo * factor
-
-    // Nueva escala personalizada
         val consumoMaximo = 15.0f
-
-
-
-        // Calcular el porcentaje según el rango personalizado
         val porcentaje = when {
             ajustado <= 0f -> 0
             ajustado >= consumoMaximo -> 100
@@ -362,21 +472,15 @@ class InicioFragment : Fragment() {
         barraConsumo.progress = porcentaje
         textConsumo.text = String.format("%.1f L/100km", ajustado)
 
-
         val color = when {
             ajustado <= 5f -> R.color.verde_consumo
             ajustado <= 9f -> R.color.amarillo_consumo
             else -> R.color.rojo_consumo
-
         }
         barraConsumo.progressTintList = ContextCompat.getColorStateList(requireContext(), color)
 
-
-
-
-
         textoComentario.text = when {
-            ajustado <= 3.5f -> "¡Que disfute para el bolsillo!"
+            ajustado <= 3.5f -> "¡Que disfrute para el bolsillo!"
             ajustado <= 5.5f -> "Buen consumo, buen viaje."
             ajustado <= 7.5f -> "Consumo adecuado."
             ajustado <= 11f -> "La cartera lo notará."
@@ -425,7 +529,7 @@ class InicioFragment : Fragment() {
         val coste = litros * precio.toDouble()
 
         val request = RutaRequest(origenNombre, destinoNombre, distanciaKm, coste, modo)
-        RetrofitClient.instance.guardarRuta("Bearer $token", request)
+        RetrofitClient.authApi.guardarRuta("Bearer $token", request)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
                     if (response.isSuccessful) {
@@ -444,7 +548,6 @@ class InicioFragment : Fragment() {
                 }
             })
     }
-
 
     override fun onResume() {
         super.onResume()

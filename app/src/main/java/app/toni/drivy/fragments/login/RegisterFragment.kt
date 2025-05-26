@@ -48,7 +48,7 @@ class RegisterFragment : Fragment() {
 
             val request = RegisterRequest(nombre, email, password)
 
-            RetrofitClient.instance.register(request).enqueue(object : Callback<ResponseBody> {
+            RetrofitClient.authApi.register(request).enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     progressBar.visibility = View.GONE
                     btnRegister.isEnabled = true

@@ -14,7 +14,10 @@ import app.toni.drivy.network.models.car.Gasolinera
 
 class GasolineraDialogFragment(
     private val gasolineras: List<Gasolinera>,
-    private val onSeleccion: (Gasolinera) -> Unit
+    private val tipoCombustible: String,
+    private val precioEstimado: Double = 1.65, // Recibe el precio estimado (moda)
+    private val onActualizar: (() -> Unit)? = null,
+    private val onSeleccion: (Gasolinera, Double) -> Unit
 ) : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -22,16 +25,37 @@ class GasolineraDialogFragment(
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_gasolineras, null)
 
-        val contenedor = view.findViewById<LinearLayout>(R.id.containerGasolineras)
+        // Botón actualizar arriba (puedes ponerlo en tu layout)
+        val btnActualizar = view.findViewById<Button>(R.id.btnActualizarGasolineras)
+        btnActualizar?.setOnClickListener {
+            onActualizar?.invoke()
+            dismiss()
+        }
 
+        val contenedor = view.findViewById<LinearLayout>(R.id.containerGasolineras)
         gasolineras.forEach { gasolinera ->
             val itemView = inflater.inflate(R.layout.item_gasolinera_card, contenedor, false)
+            val precioReal = when (tipoCombustible.lowercase()) {
+                "gasolina", "gasolina 95" -> gasolinera.precioGasolina95
+                "gasolina 98" -> gasolinera.precioGasolina98
+                "diésel", "diesel" -> gasolinera.precioDiesel
+                "híbrido", "hibrido" -> gasolinera.precioHibrido
+                "eléctrico", "electrico" -> gasolinera.precioElectrico
+                else -> gasolinera.precioGasolina95
+            }
+
+            // Mostramos el precio real o "desconocido"
+            val textPrecio = itemView.findViewById<TextView>(R.id.textPrecio)
+            if (precioReal > 0) {
+                textPrecio.text = String.format("%.2f €/L", precioReal)
+            } else {
+                textPrecio.text = "Precio desconocido (${String.format("%.2f €/L", precioEstimado)})"
+            }
 
             itemView.findViewById<TextView>(R.id.textNombre).text = gasolinera.nombre
             itemView.findViewById<TextView>(R.id.textDireccion).text = gasolinera.direccion
-            itemView.findViewById<TextView>(R.id.textPrecio).text =
-                String.format("%.2f €/L", gasolinera.precioGasolina95)
 
+            // Botón visitar en Google Maps
             itemView.findViewById<Button>(R.id.btnVisitar).setOnClickListener {
                 val uri = Uri.parse("geo:0,0?q=${gasolinera.lat},${gasolinera.lon}(${Uri.encode(gasolinera.nombre)})")
                 val intent = Intent(Intent.ACTION_VIEW, uri).apply {
@@ -42,11 +66,13 @@ class GasolineraDialogFragment(
                 }
             }
 
+            // Selección de la gasolinera
             itemView.setOnClickListener {
-                onSeleccion(gasolinera)
+                // Si el precio real es válido, lo usamos; si no, usamos el estimado
+                val precioParaUsar = if (precioReal > 0) precioReal else precioEstimado
+                onSeleccion(gasolinera, precioParaUsar)
                 dismiss()
             }
-
             contenedor.addView(itemView)
         }
 
@@ -55,4 +81,3 @@ class GasolineraDialogFragment(
         return builder.create()
     }
 }
-

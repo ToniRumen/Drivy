@@ -1,12 +1,9 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:gravity="bottom"
     android:layout_width="match_parent"
-    android:layout_height="160dp"
-    android:background="#15314A"
-    android:padding="0dp">
+    android:layout_height="200dp">
 
+    <!-- Fondo animado -->
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieFondoDrawer"
         android:layout_width="match_parent"
@@ -16,6 +13,7 @@
         app:lottie_loop="true"
         app:lottie_rawRes="@raw/particles" />
 
+    <!-- Contenido superpuesto -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -25,23 +23,51 @@
         android:paddingEnd="16dp"
         android:paddingBottom="16dp"
         android:paddingTop="48dp"
-    android:background="#80000000">
+        android:background="#80000000">
 
-    <TextView
-        android:id="@+id/headerNombre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Conductor DRIVY"
-        android:textColor="@android:color/white"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/headerNombre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conductor DRIVY"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/headerCorreo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="usuario@email.com"
-        android:textColor="@android:color/white"
-        android:textSize="14sp" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/headerCorreo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="usuario@email.com"
+            android:textColor="@android:color/white"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/climaContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingTop="6dp">
+
+            <ImageView
+                android:id="@+id/iconoClima"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_weather_sun"
+                android:tint="@android:color/white" />
+
+            <TextView
+                android:id="@+id/textoClima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="--"
+                android:textColor="@android:color/white"
+                android:textSize="13sp"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+
+
     </LinearLayout>
+</FrameLayout>

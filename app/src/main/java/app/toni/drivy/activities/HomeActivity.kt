@@ -3,14 +3,15 @@ package app.toni.drivy.activities
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.ImageButton
-import android.widget.TextSwitcher
-import android.widget.TextView
-import android.widget.Toast
+import android.view.animation.AnimationUtils
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -22,18 +23,15 @@ import app.toni.drivy.fragments.menu.InicioFragment
 import app.toni.drivy.fragments.menu.RutasFragment
 import app.toni.drivy.network.RetrofitClient
 import app.toni.drivy.network.models.user.UserResponse
+import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import android.view.animation.AnimationUtils
-import android.widget.ImageView
-import androidx.core.app.ActivityCompat
-import com.google.android.gms.location.LocationServices
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomeActivity : AppCompatActivity() {
 
@@ -56,23 +54,17 @@ class HomeActivity : AppCompatActivity() {
         configurarTextSwitcher()
         cargarPerfilUsuario()
 
-        // Configurar ViewPager
+        // ViewPager
         viewPager.adapter = ScreenSlidePagerAdapter(this)
-        viewPager.currentItem = 1 // Inicio como central
+        viewPager.currentItem = 1
         actualizarFABs(1)
-
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 actualizarFABs(position)
             }
         })
 
-        // FAB navigation
-        fabInicio.setOnClickListener { viewPager.currentItem = 1 }
-        fabRutas.setOnClickListener { viewPager.currentItem = 0 }
-        fabCoches.setOnClickListener { viewPager.currentItem = 2 }
-
-        // Botón hamburguesa personalizado
+        // Drawer
         val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
         val navView = findViewById<NavigationView>(R.id.navigationView)
         val btnHamburguesa = findViewById<ImageButton>(R.id.btnHamburguesa)
@@ -83,18 +75,11 @@ class HomeActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_perfil -> {
-                    Toast.makeText(this, "Perfil no disponible aún", Toast.LENGTH_SHORT).show()
-                }
-                R.id.nav_historial -> {
-                    viewPager.currentItem = 0 // opcional
-                }
-                R.id.nav_ajustes -> {
-                    Toast.makeText(this, "Aquí irán los ajustes", Toast.LENGTH_SHORT).show()
-                }
+                R.id.nav_perfil -> Toast.makeText(this, "Perfil no disponible aún", Toast.LENGTH_SHORT).show()
+                R.id.nav_historial -> viewPager.currentItem = 0
+                R.id.nav_ajustes -> Toast.makeText(this, "Aquí irán los ajustes", Toast.LENGTH_SHORT).show()
                 R.id.nav_logout -> {
-                    val prefs = getSharedPreferences("app", MODE_PRIVATE)
-                    prefs.edit().remove("jwt").apply()
+                    getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
                     startActivity(Intent(this, AuthActivity::class.java))
                     finish()
                 }
@@ -103,8 +88,8 @@ class HomeActivity : AppCompatActivity() {
             true
         }
 
+        // Tip del día abajo
         val tipText = findViewById<TextView>(R.id.textoTipDelDia)
-
         val tips = listOf(
             "💡 Usa modo Eco para ahorrar gasolina.",
             "🛞 Verifica la presión de los neumáticos regularmente.",
@@ -112,27 +97,27 @@ class HomeActivity : AppCompatActivity() {
             "🌿 Conduce suave: consume menos y contamina menos.",
             "🧠 Mantén una velocidad constante, evita frenazos."
         )
-
         tipText.text = tips.random()
 
-
+        // Clima abajo
         cargarClimaActual()
     }
 
     private fun cargarClimaActual() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
 
-        // Verifica permisos
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 1001)
             return
         }
 
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-            location?.let {
-                val lat = it.latitude
-                val lon = it.longitude
-                obtenerClima(lat, lon)
+            if (location != null) {
+                Log.d("CLIMA", "Lat: ${location.latitude}, Lon: ${location.longitude}")
+                obtenerClima(location.latitude, location.longitude)
+            } else {
+                Log.e("CLIMA", "Ubicación es null")
             }
         }
     }
@@ -150,17 +135,17 @@ class HomeActivity : AppCompatActivity() {
 
                 if (!body.isNullOrEmpty()) {
                     val json = JSONObject(body)
-                    val main = json.getJSONObject("main")
-                    val weather = json.getJSONArray("weather").getJSONObject(0)
+                    val temp = json.getJSONObject("main").getDouble("temp").toInt()
+                    val descripcion = json.getJSONArray("weather").getJSONObject(0).getString("description")
 
-                    val temp = main.getDouble("temp").toInt()
-                    val descripcion = weather.getString("description")
+                    Log.d("CLIMA", "Clima recibido: $temp°C, $descripcion")
 
                     runOnUiThread {
                         val texto = findViewById<TextView>(R.id.textoClima)
+                        val icono = findViewById<ImageView>(R.id.iconoClima)
+
                         texto.text = "$temp°C, $descripcion"
 
-                        val icono = findViewById<ImageView>(R.id.iconoClima)
                         when {
                             descripcion.contains("nube", true) -> icono.setImageResource(R.drawable.ic_weather_cloudy)
                             descripcion.contains("lluvia", true) -> icono.setImageResource(R.drawable.ic_weather_rain)
@@ -170,12 +155,11 @@ class HomeActivity : AppCompatActivity() {
                     }
                 }
             } catch (e: Exception) {
+                Log.e("CLIMA", "Error al obtener clima: ${e.localizedMessage}")
                 e.printStackTrace()
             }
         }.start()
     }
-
-
 
     private fun actualizarFABs(position: Int) {
         fabInicio.visibility = if (position == 1) View.GONE else View.VISIBLE
@@ -185,16 +169,15 @@ class HomeActivity : AppCompatActivity() {
 
     private inner class ScreenSlidePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
         override fun getItemCount(): Int = 3
-        override fun createFragment(position: Int): Fragment {
-            return when (position) {
-                0 -> RutasFragment()
-                1 -> InicioFragment()
-                2 -> CochesTabFragment()
-                else -> InicioFragment()
-            }
+        override fun createFragment(position: Int): Fragment = when (position) {
+            0 -> RutasFragment()
+            1 -> InicioFragment()
+            2 -> CochesTabFragment()
+            else -> InicioFragment()
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun configurarTextSwitcher() {
         switcher.setFactory {
             TextView(this).apply {
@@ -214,11 +197,19 @@ class HomeActivity : AppCompatActivity() {
         val token = prefs.getString("jwt", null)
 
         if (token != null) {
-            RetrofitClient.instance.getPerfil("Bearer $token").enqueue(object : Callback<UserResponse> {
+            RetrofitClient.authApi.getPerfil("Bearer $token").enqueue(object : Callback<UserResponse> {
                 override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                    val nombre = response.body()?.nombre ?: "Nombre conductor"
-                    mostrarFraseUnica(nombre)
-                    Log.d("Perfil", "Código: ${response.code()}, cuerpo: ${response.body()?.toString()}")
+                    val usuario = response.body()
+                    mostrarFraseUnica(usuario?.nombre ?: "Conductor")
+
+                    // ✅ Mostrar nombre y correo en el header
+                    val navView = findViewById<NavigationView>(R.id.navigationView)
+                    val header = navView.getHeaderView(0)
+                    val nombreHeader = header.findViewById<TextView>(R.id.headerNombre)
+                    val correoHeader = header.findViewById<TextView>(R.id.headerCorreo)
+
+                    nombreHeader.text = usuario?.nombre ?: "Conductor DRIVY"
+                    correoHeader.text = usuario?.email ?: "usuario@email.com"
                 }
 
                 override fun onFailure(call: Call<UserResponse>, t: Throwable) {

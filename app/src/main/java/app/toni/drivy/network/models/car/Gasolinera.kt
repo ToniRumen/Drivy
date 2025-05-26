@@ -5,6 +5,10 @@ data class Gasolinera(
     val direccion: String,
     val horario: String,
     val precioGasolina95: Double,
+    val precioGasolina98: Double,
+    val precioDiesel: Double,
+    val precioHibrido: Double,
+    val precioElectrico: Double,
     val lat: Double,
     val lon: Double
 )

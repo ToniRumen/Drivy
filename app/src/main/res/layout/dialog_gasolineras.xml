@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/containerGasolineras"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/bg_card_racing">
+    android:background="@drawable/bg_card_racing"
+    android:padding="16dp">
+
+    <!-- Botón moderno de actualizar arriba -->
+    <Button
+        android:id="@+id/btnActualizarGasolineras"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="Actualizar"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@drawable/bg_boton_racing_ripple"
+        android:layout_marginBottom="10dp"
+        android:elevation="4dp" />
+
+
+    <!-- Contenedor de las cards de gasolineras (se rellena dinámicamente) -->
+    <LinearLayout
+        android:id="@+id/containerGasolineras"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
 </LinearLayout>

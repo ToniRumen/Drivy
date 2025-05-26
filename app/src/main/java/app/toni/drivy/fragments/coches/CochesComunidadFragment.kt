@@ -52,7 +52,7 @@ class CochesComunidadFragment : Fragment() {
 
         if (token != null) {
             progressBar.visibility = View.VISIBLE
-            RetrofitClient.instance.getCochesComunidad("Bearer $token")
+            RetrofitClient.authApi.getCochesComunidad("Bearer $token")
                 .enqueue(object : Callback<List<CarResponse>> {
                     override fun onResponse(
                         call: Call<List<CarResponse>>,

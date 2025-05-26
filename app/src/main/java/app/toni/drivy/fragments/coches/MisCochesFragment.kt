@@ -60,7 +60,7 @@ class MisCochesFragment : Fragment() {
         val token = prefs.getString("jwt", null) ?: return
 
         progressBar.visibility = View.VISIBLE
-        RetrofitClient.instance.getMisCoches("Bearer $token")
+        RetrofitClient.authApi.getMisCoches("Bearer $token")
             .enqueue(object : Callback<List<CarResponse>> {
                 override fun onResponse(
                     call: Call<List<CarResponse>>,
@@ -98,7 +98,7 @@ class MisCochesFragment : Fragment() {
                                             1 -> { // Eliminar
                                                 val prefs = requireActivity().getSharedPreferences("app", 0)
                                                 val token = prefs.getString("jwt", null) ?: return@setItems
-                                                RetrofitClient.instance.eliminarCoche(coche.id.toInt(), "Bearer $token")
+                                                RetrofitClient.authApi.eliminarCoche(coche.id.toInt(), "Bearer $token")
                                                     .enqueue(object : Callback<Void> {
                                                         override fun onResponse(call: Call<Void>, response: Response<Void>) {
                                                             if (response.isSuccessful) {

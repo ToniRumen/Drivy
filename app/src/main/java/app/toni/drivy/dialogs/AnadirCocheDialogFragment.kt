@@ -54,7 +54,7 @@ class AnadirCocheDialogFragment(private val onAdded: (() -> Unit)? = null) : Dia
 
             val nuevo = CocheUpdateRequest(marca, modelo, anio, consumo, tipo)
 
-            RetrofitClient.instance.crearCoche("Bearer $token", nuevo).enqueue(object :
+            RetrofitClient.authApi.crearCoche("Bearer $token", nuevo).enqueue(object :
                 Callback<CarResponse> {
                 override fun onResponse(call: Call<CarResponse>, response: Response<CarResponse>) {
                     if (response.isSuccessful) {

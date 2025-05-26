@@ -51,7 +51,7 @@ class LoginFragment : Fragment() {
 
             val request = LoginRequest(email, password)
 
-            RetrofitClient.instance.login(request).enqueue(object : Callback<ResponseBody> {
+            RetrofitClient.authApi.login(request).enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                     // Ocultar animación
                     progressBar.visibility = View.GONE

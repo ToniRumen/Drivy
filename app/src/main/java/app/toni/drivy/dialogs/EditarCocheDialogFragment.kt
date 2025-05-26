@@ -80,7 +80,7 @@ class EditarCocheDialogFragment : DialogFragment() {
             val prefs = requireActivity().getSharedPreferences("app", 0)
             val token = prefs.getString("jwt", null) ?: return@setOnClickListener
 
-            RetrofitClient.instance.actualizarCoche(coche.id, "Bearer $token", update)
+            RetrofitClient.authApi.actualizarCoche(coche.id, "Bearer $token", update)
                 .enqueue(object : Callback<CarResponse> {
                     override fun onResponse(call: Call<CarResponse>, response: Response<CarResponse>) {
                         if (response.isSuccessful) {
