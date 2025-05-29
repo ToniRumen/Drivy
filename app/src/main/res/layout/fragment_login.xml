@@ -44,9 +44,7 @@
                     android:layout_height="wrap_content"
                     android:hint="Correo electrónico"
                     android:inputType="textEmailAddress"
-                    android:textColor="@color/white"
                     android:fontFamily="@font/racingsansoneregular"
-                    android:textColorHint="@color/white"
                     android:padding="14dp" />
             </com.google.android.material.textfield.TextInputLayout>
 

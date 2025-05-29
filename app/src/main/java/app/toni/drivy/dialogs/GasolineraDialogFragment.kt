@@ -7,15 +7,9 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.animation.AnimationUtils
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
@@ -32,6 +26,7 @@ class GasolineraDialogFragment(
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var prefs: android.content.SharedPreferences
     private lateinit var contenedor: LinearLayout
+
     private var ubicacionActual: Location? = null
     private lateinit var tipoCombustible: String
 
@@ -40,6 +35,7 @@ class GasolineraDialogFragment(
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_gasolineras, null)
 
+        // Referencias de UI
         contenedor = view.findViewById(R.id.containerGasolineras)
         val btnActualizar = view.findViewById<Button>(R.id.btnActualizarGasolineras)
         val anim = AnimationUtils.loadAnimation(requireContext(), R.anim.boton_reflejo)
@@ -48,11 +44,11 @@ class GasolineraDialogFragment(
         tipoCombustible = prefs.getString("tipo_combustible", null)?.lowercase() ?: "gasolina"
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity())
 
+        // Mostrar lista inicial
         mostrarGasolineras(gasolineras)
+        obtenerUbicacionSinOrdenar() // Para mostrar distancias si se puede
 
-        // Obtener ubicación inicial para mostrar los km desde el principio
-        obtenerUbicacionSinOrdenar()
-
+        // Botón de actualizar (reordenar por cercanía)
         btnActualizar.setOnClickListener {
             btnActualizar.isEnabled = false
             btnActualizar.startAnimation(anim)
@@ -69,22 +65,26 @@ class GasolineraDialogFragment(
         return builder.create()
     }
 
+    /**
+     * Intenta obtener la ubicación una vez para mostrar las distancias,
+     * sin reordenar la lista.
+     */
     private fun obtenerUbicacionSinOrdenar() {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
-            return // no mostrar error aquí, es opcional
-        }
+            != PackageManager.PERMISSION_GRANTED) return
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                ubicacionActual = location
-                mostrarGasolineras(gasolineras) // actualiza la lista con km visibles
+            location?.let {
+                ubicacionActual = it
+                mostrarGasolineras(gasolineras)
             }
         }
     }
 
-
+    /**
+     * Muestra la lista de gasolineras, con precios según el tipo de combustible
+     * y la distancia si se conoce la ubicación actual.
+     */
     private fun mostrarGasolineras(lista: List<Gasolinera>) {
         contenedor.removeAllViews()
         val inflater = requireActivity().layoutInflater
@@ -92,6 +92,7 @@ class GasolineraDialogFragment(
         lista.forEach { gasolinera ->
             val itemView = inflater.inflate(R.layout.item_gasolinera_card, contenedor, false)
 
+            // Asignar datos de la gasolinera
             itemView.findViewById<TextView>(R.id.textNombre).text = gasolinera.nombre
             itemView.findViewById<TextView>(R.id.textDireccion).text = gasolinera.direccion
 
@@ -99,46 +100,42 @@ class GasolineraDialogFragment(
             val precioFinal: Double
             val textoFinal: String
 
-            if (tipoCombustible == "gasolina") {
-                precioFinal = gasolinera.precioGasolina95
-                textoFinal = String.format("Gasolina: %.2f €/L", precioFinal)
-            } else if (tipoCombustible == "diésel" || tipoCombustible == "diesel") {
-                precioFinal = gasolinera.precioDiesel
-                textoFinal = String.format("Diésel: %.2f €/L", precioFinal)
-            } else {
-                textoFinal = String.format(
-                    "Gasolina: %.2f €/L\nDiésel: %.2f €/L",
-                    gasolinera.precioGasolina95,
-                    gasolinera.precioDiesel
-                )
-                precioFinal = -1.0 // No se usará para guardar
+            when (tipoCombustible) {
+                "gasolina" -> {
+                    precioFinal = gasolinera.precioGasolina95
+                    textoFinal = "Gasolina: %.2f €/L".format(precioFinal)
+                }
+                "diésel", "diesel" -> {
+                    precioFinal = gasolinera.precioDiesel
+                    textoFinal = "Diésel: %.2f €/L".format(precioFinal)
+                }
+                else -> {
+                    precioFinal = -1.0 // No guardamos
+                    textoFinal = "Gasolina: %.2f €/L\nDiésel: %.2f €/L".format(
+                        gasolinera.precioGasolina95,
+                        gasolinera.precioDiesel
+                    )
+                }
             }
 
             textoPrecio.text = textoFinal
 
-            // Mostrar distancia si se conoce ubicación
-            if (ubicacionActual != null) {
-                val userLoc = ubicacionActual!!
+            // Mostrar distancia si hay ubicación disponible
+            ubicacionActual?.let { userLoc ->
                 val gasLoc = Location("").apply {
                     latitude = gasolinera.lat
                     longitude = gasolinera.lon
                 }
-                val distanciaMetros = userLoc.distanceTo(gasLoc)
-                val distanciaKm = distanciaMetros / 1000.0
-
-                val textDistancia = itemView.findViewById<TextView>(R.id.textDistancia)
-                textDistancia.text = String.format("A %.1f km", distanciaKm)
-                textDistancia.visibility = TextView.VISIBLE
+                val distanciaKm = userLoc.distanceTo(gasLoc) / 1000.0
+                itemView.findViewById<TextView>(R.id.textDistancia).apply {
+                    text = "A %.1f km".format(distanciaKm)
+                    visibility = TextView.VISIBLE
+                }
             }
 
-
-
-
-
-
-
+            // Botón para abrir en Google Maps
             itemView.findViewById<ImageButton>(R.id.btnVisitar).setOnClickListener {
-                val uri = Uri.parse("geo:0,0?q=${gasolinera.lat},${gasolinera.lon}(${Uri.encode(gasolinera.nombre)})")
+                val uri = Uri.parse("geo:0,0?q=${gasolineras[0].lat},${gasolineras[0].lon}(${Uri.encode(gasolinera.nombre)})")
                 val intent = Intent(Intent.ACTION_VIEW, uri).apply {
                     setPackage("com.google.android.apps.maps")
                 }
@@ -147,6 +144,7 @@ class GasolineraDialogFragment(
                 }
             }
 
+            // Selección del item (guardando precio si aplica)
             itemView.setOnClickListener {
                 if (precioFinal > 0) {
                     prefs.edit().putFloat("precio_litro", precioFinal.toFloat()).apply()
@@ -159,10 +157,12 @@ class GasolineraDialogFragment(
         }
     }
 
+    /**
+     * Obtiene la ubicación actual y reordena la lista por cercanía.
+     */
     private fun obtenerUbicacionYReordenar(onFinish: () -> Unit) {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-            != PackageManager.PERMISSION_GRANTED
-        ) {
+            != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(requireContext(), "Permiso de ubicación no concedido", Toast.LENGTH_SHORT).show()
             onFinish()
             return
@@ -174,7 +174,7 @@ class GasolineraDialogFragment(
                 val ordenadas = gasolineras.sortedBy {
                     val results = FloatArray(1)
                     Location.distanceBetween(location.latitude, location.longitude, it.lat, it.lon, results)
-                    results[0]
+                    results[0] // distancia en metros
                 }
                 mostrarGasolineras(ordenadas)
             } else {

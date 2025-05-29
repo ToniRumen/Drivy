@@ -15,6 +15,7 @@ import com.airbnb.lottie.LottieAnimationView
 class ModoConduccionDialogFragment : DialogFragment() {
 
     private var modoSeleccionado: String? = null
+
     private lateinit var textoDescripcion: TextView
     private lateinit var ecoAnim: LottieAnimationView
     private lateinit var sportAnim: LottieAnimationView
@@ -22,82 +23,87 @@ class ModoConduccionDialogFragment : DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext(), R.style.DialogTheme)
-        val inflater = requireActivity().layoutInflater
-        val view = inflater.inflate(R.layout.dialog_modo_conduccion, null)
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_modo_conduccion, null)
 
-        // Referencias
-        val eco = view.findViewById<LinearLayout>(R.id.opcionEco)
-        val normal = view.findViewById<LinearLayout>(R.id.opcionNormal)
-        val sport = view.findViewById<LinearLayout>(R.id.opcionSport)
+        // Referencias UI
+        val opcionEco = view.findViewById<LinearLayout>(R.id.opcionEco)
+        val opcionNormal = view.findViewById<LinearLayout>(R.id.opcionNormal)
+        val opcionSport = view.findViewById<LinearLayout>(R.id.opcionSport)
         val botonElegir = view.findViewById<Button>(R.id.btnElegir)
-        textoDescripcion = view.findViewById(R.id.textoDescripcion)
 
+        textoDescripcion = view.findViewById(R.id.textoDescripcion)
         ecoAnim = view.findViewById(R.id.ecoParticles)
         sportAnim = view.findViewById(R.id.sportParticles)
         fondoDialogo = view
 
-        // ECO
-        eco.setOnClickListener {
+        // Selección de modo ECO
+        opcionEco.setOnClickListener {
             modoSeleccionado = "Eco"
             textoDescripcion.text = "Modo Eco activado: consumo eficiente, conducción suave y responsable."
             animarCambioFondo(R.drawable.bg_modo_eco)
             mostrarParticulas("Eco")
         }
 
-        // NORMAL
-        normal.setOnClickListener {
+        // Selección de modo NORMAL
+        opcionNormal.setOnClickListener {
             modoSeleccionado = "Normal"
             textoDescripcion.text = "Modo Normal activado: conducción equilibrada para el día a día."
             animarCambioFondo(R.drawable.bg_modo_normal)
             mostrarParticulas("Normal")
         }
 
-        // SPORT
-        sport.setOnClickListener {
+        // Selección de modo SPORT
+        opcionSport.setOnClickListener {
             modoSeleccionado = "Race"
             textoDescripcion.text = "Modo Race activado: potencia máxima y espíritu competitivo."
             animarCambioFondo(R.drawable.bg_modo_sport)
             mostrarParticulas("Race")
         }
 
-        // BOTÓN ELEGIR
+        // Confirmación del modo elegido
         botonElegir.setOnClickListener {
-            if (modoSeleccionado != null) {
-                val prefs = requireContext().getSharedPreferences("app", 0)
-                prefs.edit().putString("modo_conduccion", modoSeleccionado).apply()
-
-// Animación de salida
-                fondoDialogo.animate()
-                    .alpha(0f)
-                    .scaleX(0.9f)
-                    .scaleY(0.9f)
-                    .setDuration(250)
-                    .withEndAction {
-                        dismiss()
-                    }
-                    .start()
-
-            } else {
+            if (modoSeleccionado == null) {
                 Toast.makeText(requireContext(), "Selecciona un modo primero", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
 
-            if (modoSeleccionado != null) {
-                val prefs = requireContext().getSharedPreferences("app", 0)
-                prefs.edit().putString("modo_conduccion", modoSeleccionado).apply()
-
-                parentFragmentManager.setFragmentResult("modo_seleccionado", Bundle().apply {
-                    putString("modo", modoSeleccionado)
-                })
-
-                dismiss()
-            }
-
+            guardarModoConduccion(modoSeleccionado!!)
+            animarSalidaYCerrar()
         }
 
         builder.setView(view)
         return builder.create()
     }
 
+    /**
+     * Guarda el modo seleccionado en SharedPreferences
+     * y lo comunica al fragmento que abrió el diálogo.
+     */
+    private fun guardarModoConduccion(modo: String) {
+        val prefs = requireContext().getSharedPreferences("app", 0)
+        prefs.edit().putString("modo_conduccion", modo).apply()
+
+        parentFragmentManager.setFragmentResult("modo_seleccionado", Bundle().apply {
+            putString("modo", modo)
+        })
+    }
+
+    /**
+     * Aplica animación de salida y luego cierra el diálogo.
+     */
+    private fun animarSalidaYCerrar() {
+        fondoDialogo.animate()
+            .alpha(0f)
+            .scaleX(0.9f)
+            .scaleY(0.9f)
+            .setDuration(250)
+            .withEndAction { dismiss() }
+            .start()
+    }
+
+    /**
+     * Realiza una transición suave del fondo al cambiar de modo.
+     */
     private fun animarCambioFondo(nuevoFondo: Int) {
         val fondoActual = fondoDialogo.background
         val fondoNuevo = ContextCompat.getDrawable(requireContext(), nuevoFondo)
@@ -107,12 +113,16 @@ class ModoConduccionDialogFragment : DialogFragment() {
         transition.startTransition(400)
     }
 
+    /**
+     * Muestra animaciones de partículas según el modo seleccionado.
+     */
     private fun mostrarParticulas(modo: String) {
         when (modo) {
             "Eco" -> {
                 ecoAnim.setAnimation("eco_particles.json")
                 ecoAnim.visibility = View.VISIBLE
                 ecoAnim.playAnimation()
+
                 sportAnim.visibility = View.GONE
                 sportAnim.cancelAnimation()
             }
@@ -121,6 +131,7 @@ class ModoConduccionDialogFragment : DialogFragment() {
                 sportAnim.setAnimation("flames_or_flags.json")
                 sportAnim.visibility = View.VISIBLE
                 sportAnim.playAnimation()
+
                 ecoAnim.visibility = View.GONE
                 ecoAnim.cancelAnimation()
             }

@@ -1,8 +1,10 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:paddingBottom="110dp"> <!-- Espacio para que el resumen no tape los FABs -->
 
     <ProgressBar
         android:id="@+id/progressHistorial"
@@ -13,7 +15,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerRutas"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:visibility="gone"/>
 
     <TextView
@@ -24,8 +27,85 @@
         android:textSize="17sp"
         android:textColor="@color/cardSubtle"
         android:fontFamily="@font/racingsansoneregular"
-        android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:visibility="gone"/>
 
+    <!-- Resumen de gasto con fondo glass y margen inferior -->
+    <LinearLayout
+        android:id="@+id/layoutResumenGasto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="14dp"
+        android:layout_marginBottom="57dp"
+        android:background="@drawable/bg_card_blur"
+        android:gravity="center_horizontal"
+        android:padding="18dp"
+        android:elevation="12dp"
+        android:visibility="gone">
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupFiltro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:singleSelection="true"
+            app:chipSpacing="12dp">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSemana"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Semana"
+                android:checked="true"
+                app:chipBackgroundColor="@color/chip_selector"
+                app:checkedIconVisible="false"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:strokeColor="@color/rojo_racing"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/rojo_racing" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipMes"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mes"
+                app:chipBackgroundColor="@color/chip_selector"
+                app:checkedIconVisible="false"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:strokeColor="@color/rojo_racing"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/rojo_racing" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipSiempre"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Siempre"
+                app:chipBackgroundColor="@color/chip_selector"
+                app:checkedIconVisible="false"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                app:strokeColor="@color/rojo_racing"
+                app:strokeWidth="2dp"
+                app:rippleColor="@color/rojo_racing" />
+        </com.google.android.material.chip.ChipGroup>
+
+
+        <TextView
+            android:id="@+id/textoResumenGasto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:fontFamily="@font/racingsansoneregular"
+            android:layout_marginTop="10dp"
+            android:text="Total gastado: 0.00 €" />
+    </LinearLayout>
 </LinearLayout>

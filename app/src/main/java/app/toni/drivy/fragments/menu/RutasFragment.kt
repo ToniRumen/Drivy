@@ -5,9 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,16 +16,29 @@ import app.toni.drivy.adapters.RutaAdapter
 import app.toni.drivy.network.RetrofitClient
 import app.toni.drivy.network.models.user.RutaResponse
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.material.chip.Chip
+import com.google.android.material.chip.ChipGroup
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.Locale
+import java.text.SimpleDateFormat
+import java.util.*
 
 class RutasFragment : Fragment() {
 
     private lateinit var recycler: RecyclerView
     private lateinit var progressBar: ProgressBar
     private lateinit var textoSinRutas: TextView
+
+    // CHIPS PARA FILTRO MODERNO
+    private lateinit var layoutResumenGasto: LinearLayout
+    private lateinit var textoResumenGasto: TextView
+    private lateinit var chipGroupFiltro: ChipGroup
+    private lateinit var chipSemana: Chip
+    private lateinit var chipMes: Chip
+    private lateinit var chipSiempre: Chip
+
+    private var rutasOriginal: List<RutaResponse> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,7 +51,22 @@ class RutasFragment : Fragment() {
         textoSinRutas = view.findViewById(R.id.textoSinRutas)
         recycler.layoutManager = LinearLayoutManager(requireContext())
 
+        layoutResumenGasto = view.findViewById(R.id.layoutResumenGasto)
+        textoResumenGasto = view.findViewById(R.id.textoResumenGasto)
+        chipGroupFiltro = view.findViewById(R.id.chipGroupFiltro)
+        chipSemana = view.findViewById(R.id.chipSemana)
+        chipMes = view.findViewById(R.id.chipMes)
+        chipSiempre = view.findViewById(R.id.chipSiempre)
+
         recargarRutas()
+
+        chipGroupFiltro.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.chipSemana -> mostrarResumenFiltrado("semana")
+                R.id.chipMes -> mostrarResumenFiltrado("mes")
+                R.id.chipSiempre -> mostrarResumenFiltrado("siempre")
+            }
+        }
     }
 
     private fun recargarRutas() {
@@ -54,13 +80,14 @@ class RutasFragment : Fragment() {
                 override fun onResponse(call: Call<List<RutaResponse>>, response: Response<List<RutaResponse>>) {
                     progressBar.visibility = View.GONE
                     if (response.isSuccessful && response.body() != null) {
-                        val rutas = response.body()!!
-                        if (rutas.isEmpty()) {
+                        rutasOriginal = response.body()!!
+                        if (rutasOriginal.isEmpty()) {
                             textoSinRutas.visibility = View.VISIBLE
                             recycler.visibility = View.GONE
+                            layoutResumenGasto.visibility = View.GONE
                         } else {
                             textoSinRutas.visibility = View.GONE
-                            recycler.adapter = RutaAdapter(rutas) { rutaSeleccionada ->
+                            recycler.adapter = RutaAdapter(rutasOriginal) { rutaSeleccionada ->
                                 val opciones = arrayOf("Cargar ruta", "Eliminar ruta")
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Ruta: ${rutaSeleccionada.origen} - ${rutaSeleccionada.destino}")
@@ -72,12 +99,20 @@ class RutasFragment : Fragment() {
                                     }
                                     .show()
                             }
-
                             recycler.visibility = View.VISIBLE
+                            layoutResumenGasto.visibility = View.VISIBLE
+
+                            when (chipGroupFiltro.checkedChipId) {
+                                R.id.chipSemana -> mostrarResumenFiltrado("semana")
+                                R.id.chipMes -> mostrarResumenFiltrado("mes")
+                                R.id.chipSiempre -> mostrarResumenFiltrado("siempre")
+                                else -> mostrarResumenFiltrado("semana")
+                            }
                         }
                     } else {
                         textoSinRutas.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
+                        layoutResumenGasto.visibility = View.GONE
                         Toast.makeText(requireContext(), "Error al cargar rutas", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -86,9 +121,43 @@ class RutasFragment : Fragment() {
                     progressBar.visibility = View.GONE
                     textoSinRutas.visibility = View.VISIBLE
                     recycler.visibility = View.GONE
+                    layoutResumenGasto.visibility = View.GONE
                     Toast.makeText(requireContext(), "Fallo de red: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    private fun mostrarResumenFiltrado(periodo: String) {
+        val ahora = Date()
+        val cal = Calendar.getInstance()
+        val rutasFiltradas = when (periodo) {
+            "semana" -> {
+                cal.time = ahora
+                cal.add(Calendar.DAY_OF_YEAR, -7)
+                rutasOriginal.filter {
+                    parseFechaISO(it.fecha)?.after(cal.time) == true
+                }
+            }
+            "mes" -> {
+                cal.time = ahora
+                cal.add(Calendar.MONTH, -1)
+                rutasOriginal.filter {
+                    parseFechaISO(it.fecha)?.after(cal.time) == true
+                }
+            }
+            "siempre" -> rutasOriginal
+            else -> rutasOriginal
+        }
+        val totalGastado = rutasFiltradas.sumOf { it.costeEstimado }
+        textoResumenGasto.text = "Total gastado: %.2f €".format(totalGastado)
+    }
+
+    private fun parseFechaISO(fechaIso: String): Date? {
+        return try {
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).parse(fechaIso)
+        } catch (e: Exception) {
+            null
+        }
     }
 
     private fun cargarRutaSeleccionada(ruta: RutaResponse) {
@@ -96,7 +165,7 @@ class RutasFragment : Fragment() {
         prefs.edit()
             .putString("ruta_texto", "${ruta.origen} - ${ruta.destino}")
             .putString("modo_conduccion", ruta.modoConduccion)
-            .putFloat("precio_litro", prefs.getFloat("precio_litro", 1.65f)) // último o default
+            .putFloat("precio_litro", prefs.getFloat("precio_litro", 1.65f))
             .apply()
 
         obtenerCoordenadasYCargar(ruta.origen, ruta.destino)
@@ -104,14 +173,12 @@ class RutasFragment : Fragment() {
 
     private fun obtenerCoordenadasYCargar(origen: String, destino: String) {
         val geocoder = Geocoder(requireContext(), Locale.getDefault())
-
         val origenLatLng = geocoder.getFromLocationName(origen, 1)?.firstOrNull()?.let {
             LatLng(it.latitude, it.longitude)
         }
         val destinoLatLng = geocoder.getFromLocationName(destino, 1)?.firstOrNull()?.let {
             LatLng(it.latitude, it.longitude)
         }
-
         if (origenLatLng != null && destinoLatLng != null) {
             val prefs = requireActivity().getSharedPreferences("app", 0)
             prefs.edit()
@@ -121,21 +188,14 @@ class RutasFragment : Fragment() {
                 .putString("destino_lng", destinoLatLng.longitude.toString())
                 .apply()
 
-            // Volver a InicioFragment (ya cargado previamente con addToBackStack("inicio"))
             val pager = requireActivity().findViewById<ViewPager2>(R.id.viewPager)
-            pager.currentItem = 1 // ← Esto te manda directo al fragmento central (InicioFragment)
-
-
+            pager.currentItem = 1
         } else {
             Toast.makeText(requireContext(), "No se pudieron encontrar las ubicaciones", Toast.LENGTH_SHORT).show()
         }
-
         parentFragmentManager.setFragmentResult("ruta_cargada", Bundle())
-
         val pager = requireActivity().findViewById<ViewPager2>(R.id.viewPager)
         pager.currentItem = 1
-
-
     }
 
     private fun mostrarDialogoEliminar(id: Long) {
@@ -166,7 +226,6 @@ class RutasFragment : Fragment() {
                         Toast.makeText(requireContext(), "No se pudo eliminar la ruta", Toast.LENGTH_SHORT).show()
                     }
                 }
-
                 override fun onFailure(call: Call<Void>, t: Throwable) {
                     progressBar.visibility = View.GONE
                     Toast.makeText(requireContext(), "Error de red: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()

@@ -4,6 +4,7 @@ import android.graphics.SurfaceTexture
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.Surface
 import android.view.TextureView
 import android.view.animation.AnimationUtils
@@ -15,15 +16,13 @@ import app.toni.drivy.R
 import app.toni.drivy.databinding.ActivityAuthBinding
 import app.toni.drivy.fragments.login.WelcomeFragment
 import com.facebook.shimmer.ShimmerFrameLayout
-import java.util.*
 
 class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
     private lateinit var mediaPlayer: MediaPlayer
-    private lateinit var frasesSwitcher: TextSwitcher
-    private lateinit var shimmer: ShimmerFrameLayout
 
+    // Frases motivadoras que se rotan en la pantalla de login/registro
     private val frases = listOf(
         "Cada kilómetro deja huella.",
         "Hoy puede empezar algo legendario.",
@@ -33,17 +32,30 @@ class AuthActivity : AppCompatActivity() {
         "Acelera tus sueños, no tus dudas."
     )
 
+    // Referencias perezosas a elementos de UI
+    private val frasesSwitcher: TextSwitcher by lazy { binding.textSwitcher }
+    private val shimmer: ShimmerFrameLayout by lazy { binding.shimmerLogo }
+
+    companion object {
+        // Intervalo en milisegundos entre cada frase
+        private const val INTERVALO_FRASES_MS = 3500L
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAuthBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Reproduce un video de fondo en bucle (silencioso)
         iniciarVideoFondo()
+
+        // Configura el cambio automático de frases con animaciones
         configurarFrases()
-        shimmer = binding.shimmerLogo
+
+        // Inicia el efecto shimmer sobre el logo
         shimmer.startShimmer()
 
-        // Cargar fragmento inicial
+        // Carga el fragmento inicial (pantalla de bienvenida)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.auth_fragment_container, WelcomeFragment())
@@ -51,18 +63,19 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    // Inicia la reproducción del video de fondo en el TextureView
     private fun iniciarVideoFondo() {
-        val textureView = binding.videoBackground
-        textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+        binding.videoBackground.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
             override fun onSurfaceTextureAvailable(surface: SurfaceTexture, w: Int, h: Int) {
-                mediaPlayer = MediaPlayer()
-                val uri = Uri.parse("android.resource://$packageName/${R.raw.video_fondo}")
-                mediaPlayer.setDataSource(this@AuthActivity, uri)
-                mediaPlayer.setSurface(Surface(surface))
-                mediaPlayer.isLooping = true
-                mediaPlayer.setVolume(0f, 0f)
-                mediaPlayer.setOnPreparedListener { it.start() }
-                mediaPlayer.prepareAsync()
+                mediaPlayer = MediaPlayer().apply {
+                    val uri = Uri.parse("android.resource://$packageName/${R.raw.video_fondo}")
+                    setDataSource(this@AuthActivity, uri)
+                    setSurface(Surface(surface))
+                    isLooping = true
+                    setVolume(0f, 0f) // Mute
+                    setOnPreparedListener { it.start() }
+                    prepareAsync()
+                }
             }
 
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
@@ -75,31 +88,36 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    // Configura el TextSwitcher para mostrar frases con animaciones
     private fun configurarFrases() {
-        frasesSwitcher = binding.textSwitcher
-        frasesSwitcher.setFactory {
-            TextView(this).apply {
-                textSize = 20f
-                setTextColor(resources.getColor(android.R.color.holo_red_light, theme))
-                textAlignment = TextView.TEXT_ALIGNMENT_CENTER
-                typeface = resources.getFont(R.font.racingsansoneregular)
-            }
-        }
+        frasesSwitcher.setFactory { crearTextSwitcherView() }
+
         frasesSwitcher.inAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_in)
         frasesSwitcher.outAnimation = AnimationUtils.loadAnimation(this, android.R.anim.fade_out)
 
-        val handler = android.os.Handler(mainLooper)
-        val updateFrase = object : Runnable {
-            var index = 0
+        val handler = Handler(mainLooper)
+        var index = 0
+        val fraseRunnable = object : Runnable {
             override fun run() {
                 frasesSwitcher.setText(frases[index % frases.size])
                 index++
-                handler.postDelayed(this, 3500)
+                handler.postDelayed(this, INTERVALO_FRASES_MS)
             }
         }
-        handler.post(updateFrase)
+
+        // Inicia el cambio de frases
+        handler.post(fraseRunnable)
     }
 
+    // Crea el estilo personalizado de cada frase mostrada
+    private fun crearTextSwitcherView(): TextView = TextView(this).apply {
+        textSize = 20f
+        setTextColor(resources.getColor(android.R.color.holo_red_light, theme))
+        textAlignment = TextView.TEXT_ALIGNMENT_CENTER
+        typeface = resources.getFont(R.font.racingsansoneregular)
+    }
+
+    // Método público para cambiar de fragmento con animaciones
     fun cambiarFragmento(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .setCustomAnimations(
@@ -111,10 +129,5 @@ class AuthActivity : AppCompatActivity() {
             .replace(R.id.auth_fragment_container, fragment)
             .addToBackStack(null)
             .commit()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (::mediaPlayer.isInitialized) mediaPlayer.release()
     }
 }
