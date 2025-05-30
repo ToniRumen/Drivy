@@ -560,7 +560,13 @@ class InicioFragment : Fragment() {
         val litros = (consumo * factor / 100.0) * distanciaKm
         val coste = litros * precio.toDouble()
 
-        val request = RutaRequest(origenNombre, destinoNombre, distanciaKm, coste, modo)
+
+        // --- Redondeo de kilómetros aquí ---
+        val distanciaKmRedondeada = Math.round(distanciaKm).toDouble()
+
+
+
+        val request = RutaRequest(origenNombre, destinoNombre, distanciaKmRedondeada, coste, modo)
         RetrofitClient.authApi.guardarRuta("Bearer $token", request)
             .enqueue(object : Callback<Void> {
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

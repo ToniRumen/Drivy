@@ -12,7 +12,7 @@ object RetrofitClient {
     //IPhone: 172.20.10.3
     //Portatil casa: 192.168.18.57
 
-    private const val BASE_URL = "http://192.168.18.57:8080/"
+    private const val BASE_URL = "http://192.168.18.60:8080/"
     private const val PRECIOIL_BASE_URL = "https://api.precioil.es/"
 
 
