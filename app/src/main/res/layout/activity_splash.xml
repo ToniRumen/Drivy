@@ -30,7 +30,7 @@
         android:id="@+id/welcomeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="¡Bienvenido a DRIVY!"
+        android:text="@string/bienvenido_a_drivy"
         android:fontFamily="@font/racingsansoneregular"
         android:textSize="40sp"
         android:textColor="#101010"

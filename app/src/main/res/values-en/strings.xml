@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="drivy">DRIVY</string>
+    <string name="cada_viaje_puede_ser_una_aventura">Every trip can be an adventure.</string>
+    <string name="bienvenido_a_drivy">Welcome to DRIVY!</string>
+    <string name="detalles_del_coche">Car details</string>
+    <string name="marca">Brand</string>
+    <string name="modelo">Model</string>
+    <string name="ano">Year</string>
+    <string name="consumo_medio">Average consumption</string>
+    <string name="cancelar">Cancel</string>
+    <string name="guardar">Save</string>
+    <string name="tipo_de_combustible">Fuel type</string>
+    <string name="actualizar">Update</string>
+    <string name="eco">Eco</string>
+    <string name="normal">Normal</string>
+    <string name="sport">Sport</string>
+    <string name="selecciona_un_modo_de_conducci_n">Select a driving mode</string>
+    <string name="elegir">Choose</string>
+    <string name="ciudad_de_origen">Origin city</string>
+    <string name="ciudad_de_destino">Destination city</string>
+    <string name="conductor_drivy">DRIVY driver</string>
+    <string name="a_adir_coche">Add car</string>
+    <string name="no_tienes_coches_todav_a">You don’t have any cars yet</string>
+    <string name="ltima_ruta">LAST ROUTE</string>
+    <string name="modo_de_conducci_n">Driving mode</string>
+    <string name="no_seleccionado">Not selected</string>
+    <string name="coche">Car</string>
+    <string name="ruta">Route</string>
+    <string name="gasolinera_seleccionada">Selected gas station</string>
+    <string name="consumo_estimado">Estimated consumption</string>
+    <string name="coste_estimado">Estimated cost</string>
+    <string name="guardar_ruta">SAVE ROUTE</string>
+    <string name="correo_electr_nico">Email</string>
+    <string name="contrase_a">Password</string>
+    <string name="no_tienes_cuenta_reg_strate">Don’t have an account? Register</string>
+    <string name="entrar">Login</string>
+    <string name="nombre_completo">Full name</string>
+    <string name="confirmar_contrase_a">Confirm password</string>
+    <string name="registrarse">Sign up</string>
+    <string name="no_hay_rutas_guardadas_todav_a">No saved routes yet.</string>
+    <string name="iniciar_sesi_n">Log in</string>
+    <string name="a_adido_por_toni">Added by: Toni</string>
+    <string name="gasolina_6_5_l_100km_2021">Gasoline · 6.5 L/100km · 2021</string>
+    <string name="nombre">Name</string>
+    <string name="direcci_n">Address</string>
+    <string name="usa_modo_eco_para_ahorrar">💡 Use Eco mode to save fuel.</string>
+    <string name="mi_perfil">My profile</string>
+    <string name="ajustes">Settings</string>
+    <string name="ayuda">Help</string>
+    <string name="coste_ida_vuelta">Round trip cost</string>
+    <string name="cerrar_sesi_n">Log out</string>
+    <string name="inicio">Home</string>
+    <string name="coches">Cars</string>
+    <string name="rutas">Routes</string>
+    <string name="language_spanish">Spanish</string>
+    <string name="language_english">English</string>
+    <string name="language_setting">Language</string>
+    <string name="language_summary">Select the app language</string>
+    <string name="bienvenida_1">Welcome, %1$s!</string>
+    <string name="bienvenida_2">Great to see you, %1$s.</string>
+    <string name="bienvenida_3">%1$s, your car is ready.</string>
+    <string name="bienvenida_4">Let’s roll, %1$s!</string>
+    <string name="bienvenida_5">Time to ride, %1$s.</string>
+    <string name="tip_1">💡 Use Eco mode to save fuel.</string>
+    <string name="tip_2">🛞 Check tire pressure regularly.</string>
+    <string name="tip_3">⛽ Fuel too expensive? Plan shorter routes.</string>
+    <string name="tip_4">🌿 Drive smoothly: save and pollute less.</string>
+    <string name="tip_5">🧠 Keep steady speed, avoid hard braking.</string>
+    <string name="perfil_no_disponible">Profile not available yet</string>
+    <string name="opcion_cargar_ruta">Load route</string>
+    <string name="opcion_eliminar_ruta">Delete route</string>
+    <string name="opcion_compartir_ruta">Share route</string>
+    <string name="error_cargar_rutas">Failed to load routes</string>
+    <string name="total_gastado">Total spent: %.2f €</string>
+    <string name="eliminar_ruta">Delete route</string>
+    <string name="confirmar_eliminar_ruta">Are you sure you want to delete this route?</string>
+    <string name="eliminar">Delete</string>
+    <string name="mensaje_compartir_ruta">
+🛣 Route: %1$s → %2$s
+🚗 Mode: %3$s
+📏 Distance: %4$.0f km
+⛽ Estimated cost: %5$.2f €
+
+Calculated with DRIVY 🏁
+</string>
+
+
+
+
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:key="app_language"
+        android:title="@string/language_setting"
+        android:summary="@string/language_summary"
+        android:entries="@array/idiomas"
+        android:entryValues="@array/idiomas_valores"
+        android:defaultValue="es" />
+
+
+    <ListPreference
+        android:key="modo_predeterminado"
+        android:title="Modo de conducción por defecto"
+        android:summary="Se usará este modo si no eliges uno"
+        android:entries="@array/modos"
+        android:entryValues="@array/modos"
+        android:defaultValue="Normal" />
+
+    <Preference
+        android:key="version_app"
+        android:title="Versión"
+        android:summary="1.4.3"
+        android:enabled="false" />
+
+</PreferenceScreen>

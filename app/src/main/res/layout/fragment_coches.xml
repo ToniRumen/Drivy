@@ -25,7 +25,7 @@
             android:id="@+id/textSinCoches"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="No tienes coches todavía"
+            android:text="@string/no_tienes_coches_todav_a"
             android:textSize="18sp"
             android:textColor="@android:color/white"
             android:gravity="center"
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:contentDescription="Añadir coche"
+        android:contentDescription="@string/a_adir_coche"
         android:src="@drawable/ic_agregar_coche"
         app:backgroundTint="@color/design_default_color_error"
         android:visibility="gone" />

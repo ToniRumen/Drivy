@@ -79,6 +79,7 @@ class MisCochesFragment : Fragment() {
                                     .putString("coche_nombre", "${cocheSeleccionado.marca} ${cocheSeleccionado.modelo}")
                                     .putFloat("coche_consumo", cocheSeleccionado.consumoMedio.toFloat())
                                     .putString("tipo_combustible", cocheSeleccionado.tipoCombustible)
+                                    .putInt("coche_anio", cocheSeleccionado.anio)
                                     .apply()
                                 val activity = requireActivity() as? AppCompatActivity
                                 val viewPager = activity?.findViewById<ViewPager2>(R.id.viewPager)

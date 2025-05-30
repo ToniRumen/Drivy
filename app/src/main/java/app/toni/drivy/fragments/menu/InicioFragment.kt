@@ -246,47 +246,6 @@ class InicioFragment : Fragment() {
 
     }
 
-    // Esta función solo la usas si tu backend expone recarga manual
-    private fun recargarGasolinerasDesdeBackend(lat: Double, lon: Double, tipoCombustible: String) {
-        val progress = ProgressDialog.show(
-            requireContext(),
-            null,
-            "Actualizando gasolineras...",
-            true,
-            false
-        )
-
-        lifecycleScope.launch {
-            try {
-                // Si tienes endpoint para recargar, usa aquí RetrofitClient.gasolineraApi.recargarGasolineras()
-                val listaOriginal = withContext(Dispatchers.IO) {
-                    RetrofitClient.gasolineraApi.getGasolinerasCercanas(lat, lon)
-                } as List<app.toni.drivy.network.models.car.Gasolinera>
-                val preciosValidos = listaOriginal.mapNotNull {
-                    when (tipoCombustible.lowercase()) {
-                        "gasolina", "gasolina 95" -> it.precioGasolina95.takeIf { p -> p > 0 }
-                        "gasolina 98" -> it.precioGasolina98.takeIf { p -> p > 0 }
-                        "diésel", "diesel" -> it.precioDiesel.takeIf { p -> p > 0 }
-                        "híbrido" -> it.precioHibrido.takeIf { p -> p > 0 }
-                        "eléctrico" -> it.precioElectrico.takeIf { p -> p > 0 }
-                        else -> it.precioGasolina95.takeIf { p -> p > 0 }
-                    }
-                }
-
-                val precioPorDefecto = preciosValidos
-                    .groupingBy { Math.round(it * 100).toInt() }
-                    .eachCount()
-                    .maxByOrNull { it.value }
-                    ?.key?.let { it / 100.0 } ?: 1.65
-
-                progress.dismiss()
-            } catch (e: Exception) {
-                progress.dismiss()
-                Toast.makeText(requireContext(), "Error al actualizar gasolineras", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
     private fun recargarVista() {
         val prefs = requireActivity().getSharedPreferences("app", 0)
         val nombreCoche = prefs.getString("coche_nombre", "Sin selección")
@@ -330,6 +289,11 @@ class InicioFragment : Fragment() {
         val consumoGuardado = prefs.getFloat("coche_consumo", 0f)
         val tipoCombustible = prefs.getString("tipo_combustible", "Gasolina") ?: "Gasolina"
         val modo = prefs.getString("modo_conduccion", "Normal") ?: "Normal"
+        val anio = prefs.getInt("coche_anio", 2025)
+        val antiguedad = 2025 - anio
+        val desgasteExtra = if (antiguedad <= 3) 0.0 else (antiguedad - 3) * 0.02
+
+
 
         textNombreCoche.text = nombreCoche
         val factor = when (modo.lowercase()) {
@@ -337,7 +301,22 @@ class InicioFragment : Fragment() {
             "race" -> 1.2f
             else -> 1.0f
         }
-        textConsumo.text = String.format("%.1f L/100km", consumoGuardado)
+
+        val consumoFinal = consumoGuardado * factor + desgasteExtra.toFloat()
+        textConsumo.text = String.format("%.1f L/100km", consumoFinal)
+
+        val iconoDesgaste = view?.findViewById<ImageView>(R.id.iconoDesgaste)
+        if (antiguedad > 3) {
+            iconoDesgaste?.visibility = View.VISIBLE
+            iconoDesgaste?.setOnClickListener {
+                Toast.makeText(requireContext(), "🛠 El consumo ha aumentado por los ${antiguedad} años del coche", Toast.LENGTH_LONG).show()
+            }
+        } else {
+            iconoDesgaste?.visibility = View.GONE
+        }
+
+
+
         textModoSeleccionado.text = "Modo ${modo.replaceFirstChar { it.uppercase() }}"
 
         when (modo.lowercase()) {
@@ -384,7 +363,6 @@ class InicioFragment : Fragment() {
         }
     }
 
-
     private fun obtenerRutaReal(origen: LatLng, destino: LatLng) {
         val url = "https://maps.googleapis.com/maps/api/directions/json?origin=${origen.latitude},${origen.longitude}&destination=${destino.latitude},${destino.longitude}&mode=driving&key=$API_KEY"
         Thread {
@@ -405,7 +383,21 @@ class InicioFragment : Fragment() {
                         .getInt("value") / 1000.0
                 ).toInt()
 
+                val durationSeg = route.getJSONArray("legs")
+                    .getJSONObject(0)
+                    .getJSONObject("duration")
+                    .getInt("value") // en segundos
+
+                val horas = durationSeg / 3600
+                val minutos = (durationSeg % 3600) / 60
+                val textoTiempo = if (horas > 0) "$horas h $minutos min" else "$minutos min"
+
+
+
+
                 requireActivity().runOnUiThread {
+
+
                     googleMap?.clear()
                     googleMap?.addMarker(MarkerOptions().position(origen).title("Origen"))
                     googleMap?.addMarker(MarkerOptions().position(destino).title("Destino"))
@@ -420,6 +412,14 @@ class InicioFragment : Fragment() {
                     botonGuardarRuta.visibility = View.VISIBLE
                     botonGuardarRuta.text = "Guardar esta ruta"
                     botonGuardarRuta.isEnabled = true
+
+                    val horas = durationSeg / 3600
+                    val minutos = (durationSeg % 3600) / 60
+                    val tiempoTexto = if (horas > 0) "$horas h $minutos min" else "$minutos min"
+
+                    view?.findViewById<TextView>(R.id.textoDuracion)?.text = "⏱ $tiempoTexto"
+
+
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -474,7 +474,11 @@ class InicioFragment : Fragment() {
         val coste = (consumoAjustado / 100.0) * distanciaFinal * precio.toDouble()
 
 
-        val etiqueta = if (idaYVueltaActiva) "Coste ida/vuelta" else "Coste estimado"
+        val etiqueta = if (idaYVueltaActiva)
+            getString(R.string.coste_ida_vuelta)
+        else
+            getString(R.string.coste_estimado)
+
         view?.findViewById<TextView>(R.id.textoCosteEtiqueta)?.text = etiqueta
 
         val textoPrecio = String.format("%.2f €", coste)
@@ -493,7 +497,10 @@ class InicioFragment : Fragment() {
         }
 
         barraConsumo.max = 100
-        val ajustado = consumo * factor
+        val anio = prefs.getInt("coche_anio", 2025)
+        val antiguedad = 2025 - anio
+        val desgasteExtra = if (antiguedad <= 3) 0.0f else ((antiguedad - 3) * 0.02f)
+        val ajustado = consumo * factor + desgasteExtra
         val consumoMaximo = 15.0f
         val porcentaje = when {
             ajustado <= 0f -> 0

@@ -1,8 +1,10 @@
 package app.toni.drivy.activities
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,8 @@ import androidx.core.app.ActivityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.FragmentTransaction
+import androidx.preference.PreferenceManager
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import app.toni.drivy.R
@@ -33,6 +37,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.Locale
 import kotlin.math.abs
 
 class HomeActivity : AppCompatActivity() {
@@ -48,7 +53,26 @@ class HomeActivity : AppCompatActivity() {
     private val client = OkHttpClient()
 
     @RequiresApi(Build.VERSION_CODES.O)
+
+
+    override fun attachBaseContext(newBase: Context) {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(newBase)
+        val lang = prefs.getString("app_language", "es") ?: "es"
+        val locale = Locale(lang)
+        Locale.setDefault(locale)
+
+        val config = Configuration()
+        config.setLocale(locale)
+        val context = newBase.createConfigurationContext(config)
+        super.attachBaseContext(context)
+    }
+
+
+
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
@@ -106,9 +130,14 @@ class HomeActivity : AppCompatActivity() {
 
         navView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.nav_perfil -> toast("Perfil no disponible aún")
+                R.id.nav_perfil -> toast(getString(R.string.perfil_no_disponible))
                 R.id.nav_historial -> viewPager.currentItem = 0
-                R.id.nav_ajustes -> toast("Aquí irán los ajustes")
+                R.id.nav_ajustes -> {
+
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    true
+
+                }
                 R.id.nav_logout -> {
                     // Elimina el JWT guardado y vuelve a la pantalla de login
                     getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
@@ -124,12 +153,13 @@ class HomeActivity : AppCompatActivity() {
     // Muestra un tip aleatorio diario en la parte inferior
     private fun mostrarTipDelDia() {
         val tips = listOf(
-            "💡 Usa modo Eco para ahorrar gasolina.",
-            "🛞 Verifica la presión de los neumáticos regularmente.",
-            "⛽ Combustible caro? Planifica rutas más cortas.",
-            "🌿 Conduce suave: consume menos y contamina menos.",
-            "🧠 Mantén una velocidad constante, evita frenazos."
+            getString(R.string.tip_1),
+            getString(R.string.tip_2),
+            getString(R.string.tip_3),
+            getString(R.string.tip_4),
+            getString(R.string.tip_5)
         )
+
         findViewById<TextView>(R.id.textoTipDelDia).text = tips.random()
     }
 
@@ -265,12 +295,13 @@ class HomeActivity : AppCompatActivity() {
     // Elige una frase aleatoria de bienvenida con el nombre del usuario
     private fun mostrarFraseUnica(nombre: String) {
         val frases = listOf(
-            "¡Bienvenido, $nombre!",
-            "Qué alegría verte, $nombre.",
-            "$nombre, tu coche te espera.",
-            "¡A la aventura $nombre!",
-            "Vamos a rodar, $nombre."
+            getString(R.string.bienvenida_1, nombre),
+            getString(R.string.bienvenida_2, nombre),
+            getString(R.string.bienvenida_3, nombre),
+            getString(R.string.bienvenida_4, nombre),
+            getString(R.string.bienvenida_5, nombre)
         )
+
         switcher.post { switcher.setText(frases.random()) }
     }
 
@@ -289,4 +320,6 @@ class HomeActivity : AppCompatActivity() {
             }
         }
     }
+
+
 }

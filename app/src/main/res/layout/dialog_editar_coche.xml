@@ -13,7 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Detalles del coche"
+            android:text="@string/detalles_del_coche"
             android:textColor="#FFD700"
             android:textSize="20sp"
             android:fontFamily="@font/racesport"
@@ -24,7 +24,7 @@
             android:id="@+id/inputMarca"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Marca"
+            android:hint="@string/marca"
             android:inputType="textCapWords"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
@@ -36,7 +36,7 @@
             android:id="@+id/inputModelo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Modelo"
+            android:hint="@string/modelo"
             android:inputType="textCapWords"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
@@ -48,7 +48,7 @@
             android:id="@+id/inputAnio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Año"
+            android:hint="@string/ano"
             android:inputType="number"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
@@ -60,7 +60,7 @@
             android:id="@+id/inputConsumo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Consumo medio"
+            android:hint="@string/consumo_medio"
             android:inputType="numberDecimal"
             android:textColor="#FFFFFF"
             android:textColorHint="#888888"
@@ -71,7 +71,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tipo de combustible"
+            android:text="@string/tipo_de_combustible"
             android:textColor="#FFD700"
             android:textSize="18sp"
             android:fontFamily="@font/racingsansoneregular"
@@ -97,7 +97,7 @@
 
             <Button
                 android:id="@+id/btnCancelar"
-                android:text="Cancelar"
+                android:text="@string/cancelar"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:backgroundTint="#444444"
@@ -107,7 +107,7 @@
 
             <Button
                 android:id="@+id/btnGuardar"
-                android:text="Guardar"
+                android:text="@string/guardar"
                 android:textColor="#FFFFFF"
                 android:textSize="14sp"
                 android:backgroundTint="#FF0000"

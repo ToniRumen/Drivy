@@ -29,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
-        android:text="Actualizar"
+        android:text="@string/actualizar"
         android:textAllCaps="true"
         android:textStyle="bold"
         android:textColor="@android:color/white"

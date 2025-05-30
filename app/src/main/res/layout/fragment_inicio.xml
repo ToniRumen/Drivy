@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
-            android:text="ÚLTIMA RUTA"
+            android:text="@string/ltima_ruta"
             android:textColor="#FFFFFF"
             android:layout_marginBottom="10dp"
             android:textSize="20sp"
@@ -51,7 +51,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Modo de conducción"
+                android:text="@string/modo_de_conducci_n"
                 android:textColor="#FFD700"
                 android:fontFamily="@font/racingsansoneregular"
                 android:textSize="15sp"
@@ -61,7 +61,7 @@
                 android:id="@+id/textoModoSeleccionado"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="No seleccionado"
+                android:text="@string/no_seleccionado"
                 android:textColor="#AAAAAA"
                 android:textSize="15sp"
                 android:textStyle="bold"
@@ -91,7 +91,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Coche"
+                    android:text="@string/coche"
                     android:textColor="#FFD700"
                     android:fontFamily="@font/racingsansoneregular"
                     android:textSize="16sp" />
@@ -126,7 +126,7 @@
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Ruta"
+                    android:text="@string/ruta"
                     android:textColor="#FFD700"
                     android:fontFamily="@font/racingsansoneregular"
                     android:textSize="17sp" />
@@ -140,6 +140,8 @@
                     android:textColor="#FFFFFF"
                     android:textSize="14sp"
                     android:textStyle="bold" />
+
+
             </LinearLayout>
         </LinearLayout>
 
@@ -166,7 +168,7 @@
                     android:id="@+id/textoGasolineraTitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Gasolinera seleccionada"
+                    android:text="@string/gasolinera_seleccionada"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:textColor="#FFD700"
@@ -213,7 +215,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Consumo estimado"
+                android:text="@string/consumo_estimado"
                 android:textAlignment="center"
                 android:fontFamily="@font/racingsansoneregular"
                 android:textSize="17sp"
@@ -230,6 +232,18 @@
                 android:textSize="17sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
+
+            <ImageView
+                android:id="@+id/iconoDesgaste"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_info"
+                android:layout_marginStart="6dp"
+                android:contentDescription="Info sobre el desgaste"
+                android:visibility="gone" />
+
+
+
 
             <ProgressBar
                 android:id="@+id/barraConsumo"
@@ -283,6 +297,20 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"/>
 
+            <TextView
+                android:id="@+id/textoDuracion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⏱ --"
+                android:textSize="20sp"
+                android:textColor="#AAAAAA"
+                android:fontFamily="@font/racingsansoneregular"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="15dp"
+                android:layout_marginStart="8dp"/>
+
+
             <LinearLayout
                 android:id="@+id/costeContent"
                 android:layout_width="match_parent"
@@ -296,7 +324,7 @@
                     android:id="@+id/textoCosteEtiqueta"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Coste estimado"
+                    android:text="@string/coste_estimado"
                     android:textColor="#FFD700"
                     android:textSize="17sp"
                     android:fontFamily="@font/racingsansoneregular"
@@ -330,7 +358,7 @@
             android:layout_marginBottom="24dp"
             android:paddingStart="24dp"
             android:paddingEnd="24dp"
-            android:text="GUARDAR RUTA"
+            android:text="@string/guardar_ruta"
             android:textStyle="bold"
             android:textSize="11dp"
             android:textAllCaps="true"

@@ -14,7 +14,7 @@
         android:id="@+id/textNombre"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Nombre"
+        android:text="@string/nombre"
         android:textColor="#FFD700"
         android:textSize="25sp"
         android:textStyle="bold"
@@ -31,7 +31,7 @@
         android:id="@+id/textDireccion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Dirección"
+        android:text="@string/direcci_n"
         android:textColor="#CCCCCC"
         android:textSize="12sp"
         android:fontFamily="@font/racingsansoneregular" />

@@ -43,7 +43,7 @@
         android:id="@+id/textoTipDelDia"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="💡 Usa modo Eco para ahorrar."
+        android:text="@string/usa_modo_eco_para_ahorrar"
         android:textColor="@android:color/white"
         android:textSize="13sp"
         android:paddingTop="10dp"

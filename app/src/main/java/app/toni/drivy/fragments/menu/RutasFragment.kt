@@ -1,5 +1,6 @@
 package app.toni.drivy.fragments.menu
 
+import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -88,13 +89,20 @@ class RutasFragment : Fragment() {
                         } else {
                             textoSinRutas.visibility = View.GONE
                             recycler.adapter = RutaAdapter(rutasOriginal) { rutaSeleccionada ->
-                                val opciones = arrayOf("Cargar ruta", "Eliminar ruta")
+                                val opciones = arrayOf(
+                                    getString(R.string.opcion_cargar_ruta),
+                                    getString(R.string.opcion_eliminar_ruta),
+                                    getString(R.string.opcion_compartir_ruta)
+                                )
+
                                 AlertDialog.Builder(requireContext())
                                     .setTitle("Ruta: ${rutaSeleccionada.origen} - ${rutaSeleccionada.destino}")
                                     .setItems(opciones) { _, which ->
                                         when (which) {
                                             0 -> cargarRutaSeleccionada(rutaSeleccionada)
                                             1 -> mostrarDialogoEliminar(rutaSeleccionada.id)
+                                            2 -> compartirRuta(rutaSeleccionada)
+
                                         }
                                     }
                                     .show()
@@ -113,9 +121,31 @@ class RutasFragment : Fragment() {
                         textoSinRutas.visibility = View.VISIBLE
                         recycler.visibility = View.GONE
                         layoutResumenGasto.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Error al cargar rutas", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.error_cargar_rutas), Toast.LENGTH_SHORT).show()
+
                     }
                 }
+
+                private fun compartirRuta(ruta: RutaResponse) {
+                    val mensaje = getString(
+                        R.string.mensaje_compartir_ruta,
+                        ruta.origen,
+                        ruta.destino,
+                        ruta.modoConduccion,
+                        ruta.distanciaKm,
+                        ruta.costeEstimado
+                    )
+
+
+                    val intent = Intent().apply {
+                        action = Intent.ACTION_SEND
+                        putExtra(Intent.EXTRA_TEXT, mensaje)
+                        type = "text/plain"
+                    }
+
+                    startActivity(Intent.createChooser(intent, "Compartir ruta con..."))
+                }
+
 
                 override fun onFailure(call: Call<List<RutaResponse>>, t: Throwable) {
                     progressBar.visibility = View.GONE
@@ -149,7 +179,8 @@ class RutasFragment : Fragment() {
             else -> rutasOriginal
         }
         val totalGastado = rutasFiltradas.sumOf { it.costeEstimado }
-        textoResumenGasto.text = "Total gastado: %.2f €".format(totalGastado)
+        textoResumenGasto.text = getString(R.string.total_gastado, totalGastado)
+
     }
 
     private fun parseFechaISO(fechaIso: String): Date? {
@@ -200,12 +231,12 @@ class RutasFragment : Fragment() {
 
     private fun mostrarDialogoEliminar(id: Long) {
         AlertDialog.Builder(requireContext())
-            .setTitle("Eliminar ruta")
-            .setMessage("¿Seguro que quieres eliminar esta ruta?")
-            .setPositiveButton("Eliminar") { _, _ ->
+            .setTitle(getString(R.string.eliminar_ruta))
+            .setMessage(getString(R.string.confirmar_eliminar_ruta))
+            .setPositiveButton(getString(R.string.eliminar)) { _, _ ->
                 eliminarRutaEnBackend(id)
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(getString(R.string.cancelar), null)
             .show()
     }
 

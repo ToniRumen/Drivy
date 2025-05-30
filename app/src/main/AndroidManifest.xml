@@ -43,6 +43,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyDEyTgGFym-4Nci_cDiWOy-wzRPB2jJBU0" />
+
+        <activity android:name=".activities.SettingsActivity" />
+
+
     </application>
 
 </manifest>

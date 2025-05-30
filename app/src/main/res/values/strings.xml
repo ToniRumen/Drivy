@@ -4,5 +4,101 @@
 
     <string name="open_drawer">Abrir menú</string>
     <string name="close_drawer">Cerrar menú</string>
+    <string name="drivy">DRIVY</string>
+    <string name="cada_viaje_puede_ser_una_aventura">Cada viaje puede ser una aventura.</string>
+    <string name="bienvenido_a_drivy">¡Bienvenido a DRIVY!</string>
+    <string name="detalles_del_coche">Detalles del coche</string>
+    <string name="marca">Marca</string>
+    <string name="modelo">Modelo</string>
+    <string name="ano">Año</string>
+    <string name="consumo_medio">Consumo medio</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="guardar">Guardar</string>
+    <string name="tipo_de_combustible">Tipo de combustible</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="eco">Eco</string>
+    <string name="normal">Normal</string>
+    <string name="sport">Sport</string>
+    <string name="selecciona_un_modo_de_conducci_n">Selecciona un modo de conducción</string>
+    <string name="elegir">Elegir</string>
+    <string name="ciudad_de_origen">Ciudad de origen</string>
+    <string name="ciudad_de_destino">Ciudad de destino</string>
+    <string name="conductor_drivy">Conductor DRIVY</string>
+    <string name="a_adir_coche">Añadir coche</string>
+    <string name="no_tienes_coches_todav_a">No tienes coches todavía</string>
+    <string name="ltima_ruta">ÚLTIMA RUTA</string>
+    <string name="modo_de_conducci_n">Modo de conducción</string>
+    <string name="no_seleccionado">No seleccionado</string>
+    <string name="coche">Coche</string>
+    <string name="ruta">Ruta</string>
+    <string name="gasolinera_seleccionada">Gasolinera seleccionada</string>
+    <string name="consumo_estimado">Consumo estimado</string>
+    <string name="coste_estimado">Coste estimado</string>
+    <string name="coste_ida_vuelta">Coste ida y vuelta</string>
+    <string name="guardar_ruta">GUARDAR RUTA</string>
+    <string name="correo_electr_nico">Correo electrónico</string>
+    <string name="contrase_a">Contraseña</string>
+    <string name="no_tienes_cuenta_reg_strate">¿No tienes cuenta? Regístrate</string>
+    <string name="entrar">Entrar</string>
+    <string name="nombre_completo">Nombre completo</string>
+    <string name="confirmar_contrase_a">Confirmar contraseña</string>
+    <string name="registrarse">Registrarse</string>
+    <string name="no_hay_rutas_guardadas_todav_a">No hay rutas guardadas todavía.</string>
+    <string name="iniciar_sesi_n">Iniciar sesión</string>
+    <string name="a_adido_por_toni">Añadido por: Toni</string>
+    <string name="gasolina_6_5_l_100km_2021">Gasolina · 6.5 L/100km · 2021</string>
+    <string name="nombre">Nombre</string>
+    <string name="direcci_n">Dirección</string>
+    <string name="usa_modo_eco_para_ahorrar">💡 Usa modo Eco para ahorrar.</string>
+    <string name="mi_perfil">Mi perfil</string>
+    <string name="ajustes">Ajustes</string>
+    <string name="ayuda">Ayuda</string>
+    <string name="cerrar_sesi_n">Cerrar sesión</string>
+    <string name="inicio">Inicio</string>
+    <string name="coches">Coches</string>
+    <string name="rutas">Rutas</string>
+    <string name="language_spanish">Español</string>
+    <string name="language_english">Inglés</string>
+    <string name="language_setting">Idioma</string>
+    <string name="language_summary">Selecciona el idioma de la aplicación</string>
+    <string name="bienvenida_1">¡Bienvenido, %1$s!</string>
+    <string name="bienvenida_2">Qué alegría verte, %1$s.</string>
+    <string name="bienvenida_3">%1$s, tu coche te espera.</string>
+    <string name="bienvenida_4">¡A la aventura %1$s!</string>
+    <string name="bienvenida_5">Vamos a rodar, %1$s.</string>
+    <string name="tip_1">💡 Usa modo Eco para ahorrar gasolina.</string>
+    <string name="tip_2">🛞 Verifica la presión de los neumáticos regularmente.</string>
+    <string name="tip_3">⛽ Combustible caro? Planifica rutas más cortas.</string>
+    <string name="tip_4">🌿 Conduce suave: consume menos y contamina menos.</string>
+    <string name="tip_5">🧠 Mantén una velocidad constante, evita frenazos.</string>
+    <string name="perfil_no_disponible">Perfil no disponible aún</string>
+    <string name="opcion_cargar_ruta">Cargar ruta</string>
+    <string name="opcion_eliminar_ruta">Eliminar ruta</string>
+    <string name="opcion_compartir_ruta">Compartir ruta</string>
+    <string name="error_cargar_rutas">Error al cargar rutas</string>
+    <string name="total_gastado">Total gastado: %.2f €</string>
+    <string name="eliminar_ruta">Eliminar ruta</string>
+    <string name="confirmar_eliminar_ruta">¿Seguro que quieres eliminar esta ruta?</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="mensaje_compartir_ruta">
+🛣 Ruta: %1$s → %2$s
+🚗 Modo: %3$s
+📏 Distancia: %4$.0f km
+⛽ Coste estimado: %5$.2f €
+
+Calculado con DRIVY 🏁
+</string>
+
+
+
+
+
+
+    <string-array name="modos">
+        <item>Eco</item>
+        <item>Normal</item>
+        <item>Race</item>
+    </string-array>
+
 
 </resources>
