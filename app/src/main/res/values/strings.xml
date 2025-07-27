@@ -88,10 +88,7 @@
 
 Calculado con DRIVY 🏁
 </string>
-
-
-
-
+    <string name="mis_coches">Mis coches</string>
 
 
     <string-array name="modos">
@@ -99,6 +96,10 @@ Calculado con DRIVY 🏁
         <item>Normal</item>
         <item>Race</item>
     </string-array>
+
+
+    <string name="tab_mis_coches">Mis coches</string>
+    <string name="tab_comunidad">Comunidad</string>
 
 
 </resources>

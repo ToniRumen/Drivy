@@ -28,8 +28,14 @@ class CochesTabFragment : Fragment() {
                 if (position == 0) MisCochesFragment() else CochesComunidadFragment()
         }
 
+        // Usa strings de recursos según idioma
+        val tabTitles = listOf(
+            getString(R.string.tab_mis_coches),
+            getString(R.string.tab_comunidad)
+        )
+
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = if (position == 0) "Mis coches" else "Comunidad"
+            tab.text = tabTitles[position]
         }.attach()
     }
 }

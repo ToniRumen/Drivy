@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
-                android:contentDescription="Mis coches"
+                android:contentDescription="@string/mis_coches"
                 android:src="@drawable/ico_car"
                 android:tint="@android:color/white"
                 app:backgroundTint="#E7E235" />
