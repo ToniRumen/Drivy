@@ -42,7 +42,7 @@
                     android:id="@+id/nombreRegister"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/nombre_completo"
+                    android:hint="@string/apodo"
                     android:fontFamily="@font/racingsansoneregular"
                     android:inputType="textPersonName"
                     android:textColor="@android:color/black"
@@ -117,7 +117,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="20dp"
-                app:startIconDrawable="@drawable/ic_lock"
+                app:startIconDrawable="@drawable/ic_confirm"
                 app:startIconTint="@android:color/black"
 
                 app:endIconMode="password_toggle"

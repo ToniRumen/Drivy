@@ -35,7 +35,7 @@
     <string name="contrase_a">Password</string>
     <string name="no_tienes_cuenta_reg_strate">Don’t have an account? Register</string>
     <string name="entrar">Login</string>
-    <string name="nombre_completo">Full name</string>
+    <string name="apodo">Nickname</string>
     <string name="confirmar_contrase_a">Confirm password</string>
     <string name="registrarse">Sign up</string>
     <string name="no_hay_rutas_guardadas_todav_a">No saved routes yet.</string>
