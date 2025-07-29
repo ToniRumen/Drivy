@@ -18,6 +18,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+import android.app.AlertDialog
+import android.os.CountDownTimer
+import app.toni.drivy.fragments.cargaServer.ServerChecker
+
 class LoginFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -44,52 +48,90 @@ class LoginFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            // Mostrar animación de carga
             progressBar.visibility = View.VISIBLE
             loginButton.isEnabled = false
             loginButton.text = "Cargando..."
 
-            val request = LoginRequest(email, password)
+            // Primero comprobamos si el servidor está arriba
+            ServerChecker.checkServerIsUp { isUp ->
+                requireActivity().runOnUiThread {
+                    if (isUp) {
+                        // Si está arriba, hacemos login normal
 
-            RetrofitClient.authApi.login(request).enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    // Ocultar animación
-                    progressBar.visibility = View.GONE
-                    loginButton.isEnabled = true
-                    loginButton.text = "Entrar"
+                        val request = LoginRequest(email, password)
 
-                    if (response.isSuccessful && response.body() != null) {
-                        val token = response.body()!!.string()
+                        RetrofitClient.authApi.login(request).enqueue(object : Callback<ResponseBody> {
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                progressBar.visibility = View.GONE
+                                loginButton.isEnabled = true
+                                loginButton.text = "Entrar"
 
-                        // Guardar JWT
-                        val prefs = requireActivity().getSharedPreferences("app", 0)
-                        prefs.edit().putString("jwt", token).apply()
+                                if (response.isSuccessful && response.body() != null) {
+                                    val token = response.body()!!.string()
 
-                        // Ir a MainActivity y limpiar el back stack
-                        val intent = Intent(requireContext(), MainActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
+                                    val prefs = requireActivity().getSharedPreferences("app", 0)
+                                    prefs.edit().putString("jwt", token).apply()
 
+                                    val intent = Intent(requireContext(), MainActivity::class.java)
+                                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    startActivity(intent)
+                                } else {
+                                    Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                                }
+                            }
 
-
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                progressBar.visibility = View.GONE
+                                loginButton.isEnabled = true
+                                loginButton.text = "Entrar"
+                                Toast.makeText(requireContext(), "Error de conexión: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                                Log.e("LoginError", "Fallo de red", t)
+                            }
+                        })
 
                     } else {
-                        Toast.makeText(requireContext(), "Credenciales incorrectas", Toast.LENGTH_SHORT).show()
+                        // Si NO está arriba, mostramos el diálogo de espera y volvemos a poner el boton a "Acceder"
+
+                        showWaitingDialog()
+
+                        //PARTE MODIFICADA:
+                        progressBar.visibility = View.GONE
+                        loginButton.isEnabled = true
+                        loginButton.text = "Acceder"
                     }
                 }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    // Ocultar animación
-                    progressBar.visibility = View.GONE
-                    loginButton.isEnabled = true
-                    loginButton.text = "Entrar"
-
-                    Toast.makeText(requireContext(), "Error de conexión: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-                    Log.e("LoginError", "Fallo de red", t)
-                }
-            })
+            }
         }
 
         return view
+    }
+
+    private fun showWaitingDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Cargando servidor...")
+        builder.setMessage("Esperando a que el servidor se active...")
+
+        val progressBar = ProgressBar(requireContext(), null, android.R.attr.progressBarStyleHorizontal)
+        progressBar.max = 150 // 150 segundos = 2 minutos 30 segundos
+        progressBar.progress = 0
+
+        builder.setView(progressBar)
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
+
+        val timer = object : CountDownTimer(150000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsPassed = (150000 - millisUntilFinished) / 1000
+                progressBar.progress = secondsPassed.toInt()
+            }
+
+            override fun onFinish() {
+                dialog.dismiss()
+                Toast.makeText(requireContext(), "Intenta acceder de nuevo", Toast.LENGTH_SHORT).show()
+            }
+        }
+        timer.start()
     }
 }
