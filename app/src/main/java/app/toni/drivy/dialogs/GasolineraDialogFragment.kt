@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
@@ -18,10 +20,19 @@ import app.toni.drivy.network.models.car.Gasolinera
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
+private lateinit var locationPermissionLauncher: androidx.activity.result.ActivityResultLauncher<String>
+
+
+
 class GasolineraDialogFragment(
     private val gasolineras: List<Gasolinera>,
     private val onSeleccion: (Gasolinera) -> Unit
+
+
 ) : DialogFragment() {
+
+    private lateinit var locationPermissionLauncher: ActivityResultLauncher<String>
+    private var onFinishPending: (() -> Unit)? = null
 
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var prefs: android.content.SharedPreferences
@@ -30,10 +41,31 @@ class GasolineraDialogFragment(
     private var ubicacionActual: Location? = null
     private lateinit var tipoCombustible: String
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        locationPermissionLauncher = registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                Toast.makeText(requireContext(), "Permiso concedido. Obteniendo ubicación...", Toast.LENGTH_SHORT).show()
+                obtenerUbicacionYReordenar(onFinishPending ?: {})
+            } else {
+                Toast.makeText(requireContext(), "Permiso denegado. No se puede ordenar por cercanía.", Toast.LENGTH_SHORT).show()
+                onFinishPending?.invoke()
+            }
+            onFinishPending = null
+        }
+
+    }
+
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireContext())
         val inflater = requireActivity().layoutInflater
         val view = inflater.inflate(R.layout.dialog_gasolineras, null)
+
 
         // Referencias de UI
         contenedor = view.findViewById(R.id.containerGasolineras)
@@ -160,11 +192,13 @@ class GasolineraDialogFragment(
     /**
      * Obtiene la ubicación actual y reordena la lista por cercanía.
      */
-    private fun obtenerUbicacionYReordenar(onFinish: () -> Unit) {
+    fun obtenerUbicacionYReordenar(onFinish: () -> Unit = {}) {
         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED) {
-            Toast.makeText(requireContext(), "Permiso de ubicación no concedido", Toast.LENGTH_SHORT).show()
-            onFinish()
+
+            // Guardamos el callback para llamarlo más tarde si se concede
+            this.onFinishPending = onFinish
+            locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
             return
         }
 
@@ -174,7 +208,7 @@ class GasolineraDialogFragment(
                 val ordenadas = gasolineras.sortedBy {
                     val results = FloatArray(1)
                     Location.distanceBetween(location.latitude, location.longitude, it.lat, it.lon, results)
-                    results[0] // distancia en metros
+                    results[0]
                 }
                 mostrarGasolineras(ordenadas)
             } else {
@@ -186,4 +220,5 @@ class GasolineraDialogFragment(
             onFinish()
         }
     }
+
 }
