@@ -49,6 +49,9 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var fabCoches: FloatingActionButton
     private lateinit var viewPager: ViewPager2
 
+    //Para el perfil:
+    private lateinit var usuario: UserResponse
+
     // Cliente HTTP para peticiones externas
     private val client = OkHttpClient()
 
@@ -66,9 +69,6 @@ class HomeActivity : AppCompatActivity() {
         val context = newBase.createConfigurationContext(config)
         super.attachBaseContext(context)
     }
-
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,36 +117,6 @@ class HomeActivity : AppCompatActivity() {
         fabCoches.setOnClickListener {
             animacionBoton(fabCoches)
             viewPager.currentItem = 2
-        }
-    }
-
-    // Configura el menú lateral (Drawer)
-    private fun configurarDrawer() {
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
-        val navView = findViewById<NavigationView>(R.id.navigationView)
-        findViewById<ImageButton>(R.id.btnHamburguesa).setOnClickListener {
-            drawerLayout.openDrawer(Gravity.START)
-        }
-
-        navView.setNavigationItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.nav_perfil -> toast(getString(R.string.perfil_no_disponible))
-                R.id.nav_historial -> viewPager.currentItem = 0
-                R.id.nav_ajustes -> {
-
-                    startActivity(Intent(this, SettingsActivity::class.java))
-                    true
-
-                }
-                R.id.nav_logout -> {
-                    // Elimina el JWT guardado y vuelve a la pantalla de login
-                    getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
-                    startActivity(Intent(this, AuthActivity::class.java))
-                    finish()
-                }
-            }
-            drawerLayout.closeDrawers()
-            true
         }
     }
 
@@ -280,7 +250,7 @@ class HomeActivity : AppCompatActivity() {
 
                 if (response.isSuccessful){
 
-                    val usuario = response.body()
+                    usuario = response.body()!!
                     mostrarFraseUnica(usuario?.nombre ?: "Conductor")
 
                     val navView = findViewById<NavigationView>(R.id.navigationView)
@@ -300,13 +270,50 @@ class HomeActivity : AppCompatActivity() {
         })
     }
 
+    // Configura el menú lateral (Drawer)
+    private fun configurarDrawer() {
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawerLayout)
+        val navView = findViewById<NavigationView>(R.id.navigationView)
+        findViewById<ImageButton>(R.id.btnHamburguesa).setOnClickListener {
+            drawerLayout.openDrawer(Gravity.START)
+        }
+
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_perfil ->  {
+
+                //Iniciar actividad de perfil
+                    val intent = Intent(this, PerfilActivity::class.java)
+                    intent.putExtra("apodo", usuario.nombre)
+                    intent.putExtra("email", usuario.email)
+                    startActivity(intent)
+                }
+
+                R.id.nav_historial -> viewPager.currentItem = 0
+                R.id.nav_ajustes -> {
+
+                    startActivity(Intent(this, SettingsActivity::class.java))
+
+                }
+                R.id.nav_logout -> {
+                    // Elimina el JWT guardado y vuelve a la pantalla de login
+                    getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
+                    startActivity(Intent(this, AuthActivity::class.java))
+                    finish()
+                }
+            }
+            drawerLayout.closeDrawers()
+            true
+        }
+    }
+
     // Maneja el error cerrando sesión y mostrando toast
     private fun manejarErrorBackend() {
         runOnUiThread {
             // Eliminar JWT para forzar logout
             getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
 
-            toast("El servidor está arrancando, cierra sesión y vuelve a intentarlo en unos segundos")
+            toast("El servidor está arrancando, espera por favor...")
 
             // Lanzar Activity de login y cerrar Home
             startActivity(Intent(this, AuthActivity::class.java))

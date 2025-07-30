@@ -23,6 +23,8 @@ import retrofit2.http.Query
 
 interface AuthApi {
 
+    //Usuario
+
     @POST("auth/login")
     fun login(@Body request: LoginRequest): Call<ResponseBody>
 
@@ -35,6 +37,9 @@ interface AuthApi {
     ): Call<UserResponse>
 
 
+
+
+    //Coches
 
     @GET("coches")
     fun getMisCoches(@Header("Authorization") token: String): Call<List<CarResponse>>
@@ -57,7 +62,7 @@ interface AuthApi {
     fun eliminarCoche(@Path("id") id: Int, @Header("Authorization") token: String): Call<Void>
 
 
-
+    //Rutas
 
     @GET("rutas")
     fun getHistorialRutas(@Header("Authorization") token: String): Call<List<RutaResponse>>
@@ -74,6 +79,8 @@ interface AuthApi {
         @Path("id") id: Long
     ): Call<Void>
 
+
+    //API Gasolineras
 
     @GET("EstacionesTerrestres/")
     suspend fun getGasolineras(): Gasolinera
