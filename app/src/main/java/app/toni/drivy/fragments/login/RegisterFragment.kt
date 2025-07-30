@@ -2,6 +2,7 @@ package app.toni.drivy.fragments.login
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.Normalizer
 import java.util.Locale
+import app.toni.drivy.fragments.cargaServer.ServerChecker
+
 
 class RegisterFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -73,7 +76,7 @@ class RegisterFragment : Fragment() {
             return mayusculas > soloLetras.length * 0.7 // Más del 70% en mayúsculas
         }
 
-            btnRegister.setOnClickListener {
+        btnRegister.setOnClickListener {
             val nombre = nombreInput.text.toString().trim()
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString()
@@ -84,25 +87,25 @@ class RegisterFragment : Fragment() {
                 return@setOnClickListener
             }
 
-                if (nombre.length <= 3){
-                    Toast.makeText(requireContext(), "La longitud debe ser mayor a 3", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (nombre.length <= 3){
+                Toast.makeText(requireContext(), "La longitud debe ser mayor a 3", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                if (contieneContenidoProhibido(nombre)) {
-                    Toast.makeText(requireContext(), "Ese apodo no está permitido", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (contieneContenidoProhibido(nombre)) {
+                Toast.makeText(requireContext(), "Ese apodo no está permitido", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                if (contieneEmojisONoLetras(nombre)) {
-                    Toast.makeText(requireContext(), "No se permiten símbolos, emojis ni números en el apodo", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (contieneEmojisONoLetras(nombre)) {
+                Toast.makeText(requireContext(), "No se permiten símbolos, emojis ni números en el apodo", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
-                if (excesoMayusculas(nombre)) {
-                    Toast.makeText(requireContext(), "Usa un formato de texto normal, sin tantas mayúsculas", Toast.LENGTH_SHORT).show()
-                    return@setOnClickListener
-                }
+            if (excesoMayusculas(nombre)) {
+                Toast.makeText(requireContext(), "Usa un formato de texto normal, sin tantas mayúsculas", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
 
             if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
@@ -113,7 +116,7 @@ class RegisterFragment : Fragment() {
 
 
 
-                if (password != passwordConfirm) {
+            if (password != passwordConfirm) {
                 Toast.makeText(requireContext(), "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -123,58 +126,80 @@ class RegisterFragment : Fragment() {
                 return@setOnClickListener
             }
 
-
-            progressBar.visibility = View.VISIBLE
+            val progressBar = view.findViewById<ProgressBar>(R.id.registerProgressBar)
             btnRegister.isEnabled = false
+            btnRegister.text = "Cargando..."
+            progressBar.visibility = View.VISIBLE
             btnRegister.text = "Registrando..."
 
-            val request = RegisterRequest(nombre, email, password)
 
-            RetrofitClient.authApi.register(request).enqueue(object : Callback<ResponseBody> {
-                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                    progressBar.visibility = View.GONE
-                    btnRegister.isEnabled = true
-                    btnRegister.text = "Registrarse"
+            ServerChecker.checkServerIsUp { isUp ->
+                requireActivity().runOnUiThread {
+                    if (isUp) {
+                        val request = RegisterRequest(nombre, email, password)
 
-                    if (response.isSuccessful && response.body() != null) {
-                        Toast.makeText(
-                            requireContext(),
-                            "¡Registro completado! Por favor, inicia sesión.",
-                            Toast.LENGTH_LONG
-                        ).show()
-                        // Redirigir al login:
-                        (activity as AuthActivity).cambiarFragmento(LoginFragment())
+                        RetrofitClient.authApi.register(request).enqueue(object : Callback<ResponseBody> {
+                            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                                progressBar.visibility = View.GONE
+                                btnRegister.isEnabled = true
+                                btnRegister.text = "Registrarse"
 
-                    } else if (response.code() == 400){
+                                if (response.isSuccessful) {
+                                    Toast.makeText(requireContext(), "Registro exitoso. Ahora puedes iniciar sesión", Toast.LENGTH_LONG).show()
+                                    (activity as AuthActivity).cambiarFragmento(LoginFragment())
+                                } else {
+                                    Toast.makeText(requireContext(), "No se pudo registrar. Intenta con otro correo", Toast.LENGTH_SHORT).show()
+                                }
+                            }
 
-                        // Crear diálogo diciendo que el usuario ya existe y si quiere logearse con él
-
-                        val builder = AlertDialog.Builder(requireContext())
-                        builder.setTitle("Me suenas de algo...")
-                        builder.setMessage("Este usuario ya existe, ¿quieres logearte con él?")
-                        builder.setPositiveButton("Sí") { dialog, which ->
-                            // Redirigir al login:
-                            (activity as AuthActivity).cambiarFragmento(LoginFragment())
-                        }
-                        builder.setNegativeButton("No") { dialog, which ->
-                            // No hacer nada
-                        }
-                        builder.show()
-
+                            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                                progressBar.visibility = View.GONE
+                                btnRegister.isEnabled = true
+                                btnRegister.text = "Registrarse"
+                                Toast.makeText(requireContext(), "Error de conexión: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
+                            }
+                        })
                     } else {
-                        Toast.makeText(requireContext(), "Error al registrarse, codigo de error: ${response.code()}", Toast.LENGTH_SHORT).show()
+                        showWaitingDialog()
+                        progressBar.visibility = View.GONE
+                        btnRegister.isEnabled = true
+                        btnRegister.text = "Registrarse"
                     }
                 }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    btnRegister.isEnabled = true
-                    btnRegister.text = "Registrarse"
-                    Toast.makeText(requireContext(), "Error de red: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-                }
-            })
+            }
         }
 
         return view
     }
+
+    private fun showWaitingDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle("Cargando servidor...")
+        builder.setMessage("Esperando a que el servidor se active...")
+
+        val progressBar = ProgressBar(requireContext(), null, android.R.attr.progressBarStyleHorizontal)
+        progressBar.max = 150 // 150 segundos = 2 minutos 30 segundos
+        progressBar.progress = 0
+
+        builder.setView(progressBar)
+        builder.setCancelable(false)
+
+        val dialog = builder.create()
+        dialog.show()
+
+        val timer = object : CountDownTimer(150000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                val secondsPassed = (150000 - millisUntilFinished) / 1000
+                progressBar.progress = secondsPassed.toInt()
+            }
+
+            override fun onFinish() {
+                dialog.dismiss()
+                Toast.makeText(requireContext(), "Intenta registrarte de nuevo", Toast.LENGTH_SHORT).show()
+
+            }
+        }
+        timer.start()
+    }
+
 }

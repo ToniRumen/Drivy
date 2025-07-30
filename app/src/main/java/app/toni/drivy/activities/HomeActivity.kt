@@ -277,19 +277,41 @@ class HomeActivity : AppCompatActivity() {
 
         RetrofitClient.authApi.getPerfil("Bearer $token").enqueue(object : Callback<UserResponse> {
             override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
-                val usuario = response.body()
-                mostrarFraseUnica(usuario?.nombre ?: "Conductor")
 
-                val navView = findViewById<NavigationView>(R.id.navigationView)
-                val header = navView.getHeaderView(0)
-                header.findViewById<TextView>(R.id.headerNombre).text = usuario?.nombre ?: "Conductor DRIVY"
-                header.findViewById<TextView>(R.id.headerCorreo).text = usuario?.email ?: "usuario@email.com"
+                if (response.isSuccessful){
+
+                    val usuario = response.body()
+                    mostrarFraseUnica(usuario?.nombre ?: "Conductor")
+
+                    val navView = findViewById<NavigationView>(R.id.navigationView)
+                    val header = navView.getHeaderView(0)
+                    header.findViewById<TextView>(R.id.headerNombre).text = usuario?.nombre ?: "Conductor DRIVY"
+                    header.findViewById<TextView>(R.id.headerCorreo).text = usuario?.email ?: "usuario@email.com"
+                } else {
+                    // Respuesta errónea del servidor (p.ej. 500)
+                    manejarErrorBackend()
+                }
+
             }
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                mostrarFraseUnica("Fallo")
+                manejarErrorBackend()
             }
         })
+    }
+
+    // Maneja el error cerrando sesión y mostrando toast
+    private fun manejarErrorBackend() {
+        runOnUiThread {
+            // Eliminar JWT para forzar logout
+            getSharedPreferences("app", MODE_PRIVATE).edit().remove("jwt").apply()
+
+            toast("El servidor está arrancando, cierra sesión y vuelve a intentarlo en unos segundos")
+
+            // Lanzar Activity de login y cerrar Home
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
+        }
     }
 
     // Elige una frase aleatoria de bienvenida con el nombre del usuario

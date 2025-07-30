@@ -13,6 +13,9 @@ import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.libraries.places.api.model.RectangularBounds
+
 
 class DialogSeleccionCiudad : DialogFragment() {
 
@@ -58,8 +61,16 @@ class DialogSeleccionCiudad : DialogFragment() {
     private fun iniciarSelectorLugar() {
         try {
             val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG)
+
+            val boundsEurope = RectangularBounds.newInstance(
+                com.google.android.gms.maps.model.LatLng(34.0, -10.0),  // SW
+                com.google.android.gms.maps.model.LatLng(72.0, 40.0)    // NE
+            )
+
             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+                .setLocationRestriction(boundsEurope)  // <-- Aquí va RectangularBounds, NO LatLngBounds
                 .build(requireContext())
+
             launcher.launch(intent)
         } catch (e: Exception) {
             e.printStackTrace()
