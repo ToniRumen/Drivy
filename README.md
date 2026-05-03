@@ -47,16 +47,14 @@ https://github.com/ToniRumen/Api_Drivy
 
 ## 📸 Capturas de la aplicación
 
-<img width="720" height="2212" alt="loginPantalla" src="https://github.com/user-attachments/assets/8b420cd6-a052-4e1b-ae3b-f375eb70a928" />
 
-<img width="720" height="2212" alt="MenuPrincipal" src="https://github.com/user-attachments/assets/23551848-3cf7-4944-9a58-052b93f8729b" />
-
-<img width="720" height="2212" alt="modoConduccion" src="https://github.com/user-attachments/assets/576a400e-ee39-441a-8dbb-8f28f0c9a9a5" />
-
-<img width="720" height="2212" alt="rutasGuardadas" src="https://github.com/user-attachments/assets/d389d9b7-00e4-4f47-97ae-6e69882e529a" />
-
-<img width="720" height="2212" alt="listaGasolineras" src="https://github.com/user-attachments/assets/5b2652e9-a859-42fb-9066-d274473ca5fa" />
-
+<p align="center">
+<img width="250" alt="loginPantalla" src="https://github.com/user-attachments/assets/8b420cd6-a052-4e1b-ae3b-f375eb70a928" />
+<img width="250" alt="MenuPrincipal" src="https://github.com/user-attachments/assets/23551848-3cf7-4944-9a58-052b93f8729b" />
+<img width="250" alt="modoConduccion" src="https://github.com/user-attachments/assets/576a400e-ee39-441a-8dbb-8f28f0c9a9a5" />
+<img width="250" alt="rutasGuardadas" src="https://github.com/user-attachments/assets/d389d9b7-00e4-4f47-97ae-6e69882e529a" />
+<img width="250" alt="listaGasolineras" src="https://github.com/user-attachments/assets/5b2652e9-a859-42fb-9066-d274473ca5fa" />
+</p>  
 
 ---
 
