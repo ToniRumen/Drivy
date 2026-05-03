@@ -27,9 +27,18 @@ Este proyecto está compuesto por:
 
 ### Backend (API)
 
-* Java / Spring Boot
-* API REST
-* Base de datos
+- Java
+- Spring Boot
+- API REST
+- PostgreSQL
+- Autenticación y autorización con JWT
+- Arquitectura por capas (controller, service, repository)
+
+---
+
+## 🔐 Seguridad
+
+La aplicación implementa autenticación mediante JWT para proteger los endpoints y gestionar sesiones de usuario.
 
 ---
 
